@@ -55,6 +55,7 @@ The paper explicitly identifies several unresolved mathematical questions, inclu
 4. **Physical realizability** — Can the flag complex construction be applied to entanglement structures arising from physically realistic Hamiltonians, or does it require idealized entanglement patterns?
 
 These are not bugs — they are the research program. The framework is intended to make these questions askable in precise terms.
+
 ---
 
 ## Related Work
