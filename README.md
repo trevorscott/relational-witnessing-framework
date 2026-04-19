@@ -5,7 +5,7 @@ A formal mathematical framework locating the emergence of time and subjective ex
 ---
 ## Contents
 
-[`The_Hard_Problems_of_the_Universe.pdf`](./The_Hard_Problems_of_the_Universe.pdf) 
+[`relational_witnessing_framework.pdf`](./relational_witnessing_framework.pdf) 
 
 ---
 
@@ -35,10 +35,19 @@ Finally, the paper proposes a conjecture connecting **Bott periodicity** in the 
 
 ---
 
+## Empirical Application
+
+While the Relational Witnessing Framework explores the philosophical and foundational implications of entanglement topology, the mathematical pipeline defined in Section 6 (flag complexes weighted by logarithmic negativity) is strictly empirical.
+
+This methodology is actively being applied to high-energy physics to extract topological observables from multipartite quantum states at the LHC. 
+👉 **See the companion repository:** [Topological Signatures of Multipartite Entanglement at the LHC](https://github.com/trevorscott/ttbar-entanglement-topology) *(Note: Replace with actual URL)*
+
+---
+
 ## Mathematical Tools
 
 - **Algebraic topology:** Persistent homology, flag complexes (clique complexes of graphs), classifying spaces, characteristic classes
-- **Quantum information theory:** Von Neumann entropy, entanglement graphs, partial trace, Schmidt decomposition
+- **Quantum information theory:** Von Neumann entropy, entanglement graphs, partial trace, Schmidt decomposition, Logarithmic Negativity
 - **Category theory:** Functorial decomposition of the map from quantum states to experiential structure
 - **Mathematical physics:** Wheeler–DeWitt equation, Page–Wootters mechanism, ADM formalism
 - **Information theory & thermodynamics:** Landauer's Principle, Margolus–Levitin quantum speed limit
@@ -58,14 +67,20 @@ These are not bugs — they are the research program. The framework is intended 
 
 ---
 
-## Related Work
+## Related Work & Prior Art
 
+This framework builds upon foundational physics and intersects with recent advances applying Topological Data Analysis (TDA) to quantum systems:
+
+**Foundational Physics:**
 - **Page & Wootters (1983)** — Evolution without evolution: Dynamics described by stationary observables
 - **DeWitt (1967)** — Quantum Theory of Gravity. I. The Canonical Theory
 - **Landauer (1961)** — Irreversibility and Heat Generation in the Computing Process
 - **Margolus & Levitin (1998)** — The maximum speed of dynamical evolution
 - **Bott (1959)** — The stable homotopy of the classical groups
-- **Edelsbrunner & Harer (2010)** — Computational Topology: An Introduction
+
+**TDA & Quantum Entanglement:**
+- **Olsthoorn et al. (2023)** — *Persistent homology of quantum entanglement* (Establishing the validity of mapping entanglement entropy via TDA)
+- **Di Pierro & Mengoni (2023)** — *Topological Data Analysis of Quantum Entanglement* - **Beuria et al. (2023)** — *Persistent homology of collider observations: when (w)hole matters* (Introducing TDA to LHC phenomenological studies)
 
 ---
 
