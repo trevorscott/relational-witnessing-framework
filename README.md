@@ -37,10 +37,9 @@ Finally, the paper proposes a conjecture connecting **Bott periodicity** in the 
 
 ## Empirical Application
 
-While the Relational Witnessing Framework explores the philosophical and foundational implications of entanglement topology, the mathematical pipeline defined in Section 6 (flag complexes weighted by logarithmic negativity) is strictly empirical.
+While the Relational Witnessing Framework explores the philosophical and foundational implications of entanglement topology, the mathematical pipeline defined in Section 6 — flag complexes weighted by logarithmic negativity, with persistent homology on the filtration — is strictly empirical and independently applicable.
 
-This methodology is actively being applied to high-energy physics to extract topological observables from multipartite quantum states at the LHC. 
-👉 **See the companion repository:** [Topological Signatures of Multipartite Entanglement at the LHC](https://github.com/trevorscott/ttbar-entanglement-topology) *(Note: Replace with actual URL)*
+This construction has been applied to LHC collider data in a companion paper: [Topological Signatures of Quantum Entanglement at the LHC](https://github.com/trevorscott/topological-signatures-entanglement) — which computes the first log-negativity measurement of the tt̄ spin density matrix from CMS 138 fb⁻¹ data and produces a testable SM prediction for H → ZZ* tripartite topology in Run 3.
 
 ---
 
