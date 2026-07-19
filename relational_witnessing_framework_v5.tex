@@ -1,0 +1,596 @@
+\documentclass[11pt, a4paper]{article}
+
+% ---- Packages ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{braket}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{tikz-cd}
+
+% ---- Theorem environments ----
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+\newtheorem{hypothesis}{Hypothesis}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{remark}{Remark}
+
+\title{\textbf{The Relational Witnessing Framework:} \\
+The Emergence of Time and Experience from Entanglement Entropy}
+\author{Trevor Scott}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+% ====================================================================
+\begin{abstract}
+This paper outlines a formal mathematical framework locating the emergence of time and subjective experience within a globally static, timeless quantum state. Synthesizing the Wheeler--DeWitt equation, Landauer's Principle, the Page--Wootters mechanism, and the Margolus--Levitin quantum speed limit, we propose that witnessing, entanglement entropy, and relational time share a common structural origin in the epistemic bipartition of a timeless whole: witnessing and entanglement entropy follow canonically from the bipartition via the partial trace, while relational time is erected on the same cut through additional clock--memory structure that we enumerate explicitly. Crucially, this framework does not propose new physics; rather, it defines the structural scaffold that any future theory of experience must map from. We formalize the epistemic reading of the partial trace, define the relational step and its entropy increment via a clock--memory decomposition of the witness, derive a model-dependent clock-resolution bound under explicit modeling assumptions, construct a flag complex encoding the entanglement topology of a witnessing subsystem, and define the categorical and topological constraints that any solution to the hard problem of consciousness must mathematically satisfy.
+
+\medskip
+\noindent\textbf{Methodological note.} Axioms I--IV constitute the deductive core of the framework, relying on established physics and information theory; all modeling assumptions on which their consequences depend are stated explicitly and labeled as such (Assumptions~\ref{ass:opt}--\ref{ass:mono}). Axiom~V and the Topological Hypothesis (Section~\ref{sec:topo}) are conjectures about the form that any bridge between physics and phenomenology must take. We are explicit about where derivation ends and conjecture begins.
+
+\medskip
+\noindent\textbf{Conventions.} Throughout, $\log$ denotes the base-2 logarithm and all entropies are measured in bits: the von Neumann entropy is $S(\rho) = -\operatorname{Tr}(\rho \log \rho)$, consistent with the base-2 convention used for logarithmic negativity in Section~\ref{sec:topo}. With this convention, Landauer's principle carries an explicit conversion factor $\ln 2$ (joules per kelvin per bit via $k_B \ln 2$). We further distinguish three conceptually distinct quantities that this convention lets us relate but not conflate: the \emph{entanglement entropy} of a reduced state (an information-theoretic property of a quantum state), the \emph{information-theoretic entropy of a record} (bits erased or overwritten in a memory), and \emph{thermodynamic entropy} (dissipated heat divided by temperature). Where the framework identifies increments of one with increments of another, the identification is stated as an explicit assumption.
+\end{abstract}
+
+% ====================================================================
+\section{Axiom I: The Timeless Whole}
+\label{sec:axiom1}
+
+We begin outside of time. The universe, in its entirety, is a closed system in a pure, static quantum state. There is no external clock, and therefore no objective temporal evolution.
+
+Let the total Hilbert space of the universe be $\mathcal{H}_{\mathrm{total}}$, and let the universe be described by a single pure state vector $\ket{\Psi}$.
+
+\begin{axiom}[Global Stasis]
+The physical state of the universe satisfies the Hamiltonian constraint \cite{DeWitt1967}:
+\begin{equation}
+\hat{H}\ket{\Psi} = 0.
+\label{eq:WDW}
+\end{equation}
+\end{axiom}
+
+We emphasize that in canonical quantum gravity Equation~\eqref{eq:WDW} is a \emph{constraint}---the quantum implementation of the classical Hamiltonian constraint arising from the diffeomorphism invariance of general relativity---rather than an ordinary energy-eigenvalue statement. Its consequence is that $\ket{\Psi}$ is stationary with respect to any external coordinate parameter: no observable of the universe evolves with respect to an unphysical background time. This is the precise sense in which the framework ``begins outside of time.''
+
+Because $\ket{\Psi}$ is a globally pure state, its density matrix $\rho_{\mathrm{total}} = \ket{\Psi}\!\bra{\Psi}$ has von Neumann entropy of exactly zero:
+\begin{equation}
+S(\rho_{\mathrm{total}}) = -\operatorname{Tr}(\rho_{\mathrm{total}} \log \rho_{\mathrm{total}}) = 0.
+\label{eq:Stotal}
+\end{equation}
+
+There is no arrow of time at the global level.
+
+% ====================================================================
+\section{Axiom II: The Hilbert Space Bipartition}
+\label{sec:axiom2}
+
+To yield the emergence of relational dynamics, the timeless whole must be partitioned. We mathematically divide the whole into a \emph{Witness} ($W$) and the \emph{Rest of the Universe} ($R$) by factoring the Hilbert space via a tensor product decomposition:
+
+\begin{axiom}[Bipartition]
+\begin{equation}
+\mathcal{H}_{\mathrm{total}} = \mathcal{H}_W \otimes \mathcal{H}_R.
+\label{eq:bipartition}
+\end{equation}
+\end{axiom}
+
+As noted by Zanardi, Lidar, and Lloyd \cite{Zanardi2004}, the tensor product structure of a Hilbert space is not uniquely given \emph{a priori}; it is observable-induced. We adopt the following criterion for the preferred factorization:
+
+\begin{definition}[Preferred Factorization]
+\label{def:factorization}
+The dynamically preferred bipartition $\mathcal{H}_W \otimes \mathcal{H}_R$ is the tensor product structure with respect to which a specified algebra of observables $\mathcal{A}_W$, together with its physical interpretation, acts locally on $\mathcal{H}_W$.
+\end{definition}
+
+This is a static, algebraic criterion: it selects the factorization by reference to the structure and physical meaning of the observable algebra, not by reference to any dynamical process.
+
+For the clock degree of freedom introduced in Axiom~IV, Marletto and Vedral \cite{Marletto2017} prove that the Page--Wootters clock factorization is free of ambiguity when the clock is non-interacting, i.e., when the global Hamiltonian decomposes as $\hat{H} = \hat{H}_C \otimes \mathbb{1} + \mathbb{1} \otimes \hat{H}_{\mathrm{rest}}$ with no interaction term. A recent analysis by Stoica \cite{Stoica2026} argues, however, that a purely relational condition such as non-interaction is by itself insufficient: the clock ambiguity extends beyond histories to the evolution laws themselves, and is resolved only by specifying the \emph{physical meaning of the observables}. We take this objection seriously, and note that it converges on precisely the criterion adopted here: the observable-algebra criterion of Definition~\ref{def:factorization} is the primary selection principle, supplying the physical interpretation that Stoica's analysis requires, while the Marletto--Vedral non-interaction condition functions as a supplementary condition on the clock factor---securing the internal consistency of the Page--Wootters conditioning in Axiom~IV---rather than a free-standing resolution of the factorization ambiguity. An apparent tension between the non-interaction condition and Landauer erasure is addressed directly in Remark~\ref{rem:tension}.
+
+We note that Zurek's Quantum Darwinism \cite{Zurek2009} provides a dynamical confirmation of the algebraic selection in the emergent-time regime---the environment selectively proliferates information about pointer states, stabilizing precisely the factorization that makes $\mathcal{A}_W$ local. However, Quantum Darwinism is not invoked foundationally here, since it presupposes time, which is not defined until Axiom~IV. Instead, it serves as a \emph{consistency check}: the factorization selected algebraically must coincide with the one stabilized dynamically once relational time has emerged.
+
+% ====================================================================
+\section{Axiom III: The Epistemic Bipartition}
+\label{sec:axiom3}
+
+\begin{axiom}[Formal Witness]
+A subsystem $W$ acts as a \emph{formal Witness} if and only if it possesses genuine quantum entanglement with $R$, characterized by:
+\begin{enumerate}[label=(\roman*)]
+    \item a non-trivial Schmidt rank in the decomposition of $\ket{\Psi}$ across the bipartition, and
+    \item non-zero logarithmic negativity $E_{\mathcal{N}}(W{:}R) > 0$.
+\end{enumerate}
+\end{axiom}
+
+The requirement of non-zero logarithmic negativity distinguishes genuine quantum entanglement from classical thermodynamic mixedness. A subsystem whose reduced state is mixed solely due to classical ignorance (a separable state) does not qualify as a formal Witness.
+
+\begin{remark}
+For the bipartition of a pure global state $\ket{\Psi}$, conditions (i) and (ii) are equivalent: non-trivial Schmidt rank implies non-zero logarithmic negativity, and vice versa. This follows because Schmidt rank greater than one for a pure state implies the reduced state $\rho_W$ is mixed, and for reductions of pure bipartite states, non-trivial mixedness implies positive partial-transpose negativity. Both conditions are stated explicitly because they diverge for mixed bipartite states, which arise in the internal sub-factorizations of $W$ (Section~\ref{sec:topo}), where reduced states of subsystem pairs are generically mixed and can be mixed without being entangled.
+\end{remark}
+
+\begin{remark}
+Whether a formal Witness possesses \emph{phenomenal experience} is a separate question entirely, addressed in Axiom~V.
+\end{remark}
+
+To find the state of the Witness, we apply the partial trace, tracing out the rest of the universe:
+\begin{equation}
+\rho_W = \operatorname{Tr}_R\!\bigl(\ket{\Psi}\!\bra{\Psi}\bigr) = \sum_i p_i \ket{w_i}\!\bra{w_i}.
+\label{eq:rhoW}
+\end{equation}
+
+Two claims about this operation must be distinguished. The \emph{mathematical} claim: the reduced state $\rho_W$ completely determines the statistics of all observables in $\mathcal{A}_W$; no measurement local to $W$ can distinguish the global pure state $\ket{\Psi}$ from the mixture $\rho_W$. This is a theorem of quantum theory, independent of interpretation. The \emph{interpretive} claim, which we adopt and label as such: this reduction constitutes the epistemic perspective of the subsystem---the partial trace describes what the subsystem \emph{can know}, not what physically happens to the global wave function. On this reading, witnessing is not an ontological event that destroys superpositions; it is the epistemological adoption of a local perspective on a globally pure state. The framework's formal results depend only on the mathematical claim; the interpretive gloss names the perspective from which the relational constructions of Axiom~IV are read, and a reader who rejects the gloss may retain every equation.
+
+Because of the local restriction together with the entanglement condition of Axiom~III, the von Neumann entropy of the Witness is strictly greater than zero:
+\begin{equation}
+S(\rho_W) = -\sum_i p_i \log p_i > 0.
+\label{eq:SW}
+\end{equation}
+(For a product state the restriction alone yields $S(\rho_W) = 0$; strict positivity is a consequence of the non-trivial Schmidt rank required by Axiom~III.) Entropy is the intrinsic mathematical consequence of adopting a local perspective within an entangled system.
+
+% ====================================================================
+\section{Axiom IV: Relational Time}
+\label{sec:axiom4}
+
+Time is what conditional entropy accumulation looks like from inside a bipartition. If part of the Witness acts as a clock, we define the state of the Rest of the universe conditional on the clock reading a specific state $\ket{w(\tau)}$, following the Page--Wootters mechanism \cite{Page1983}.\footnote{We use the standard shorthand $\braket{w(\tau)|\Psi}$ for the conditional state $(\bra{w(\tau)}_C \otimes \mathbb{1})\ket{\Psi}$, which is unnormalized as written; normalized conditional states are obtained by dividing by $\lVert(\bra{w(\tau)}_C \otimes \mathbb{1})\ket{\Psi}\rVert$. The Kucha\v{r} two-time-correlation objection to the Page--Wootters construction is resolved in the covariant formulation of Giovannetti, Lloyd, and Maccone \cite{Giovannetti2015}; for the full perspective-neutral formalism, see H\"{o}hn, Smith, and Lock \cite{Hohn2021}.}
+
+\begin{axiom}[Relational Time]
+The emergent time parameter $\tau$ of a Witness is defined relationally: the (unnormalized) state of the environment conditional on the clock reading $\ket{w(\tau)}$ is
+\begin{equation}
+\ket{\tilde{\psi}(\tau)} = \bigl(\bra{w(\tau)}_C \otimes \mathbb{1}\bigr)\ket{\Psi}.
+\label{eq:PW}
+\end{equation}
+The parameter $\tau$ is the emergent, subjective time of the Witness; it labels the family of conditional states and carries no meaning external to the bipartition.
+\end{axiom}
+
+% --------------------------------------------------------------------
+\subsection{The relational step and its entropy increment}
+\label{sec:step}
+
+A subtlety must be made explicit before entropy can be coupled to $\tau$. Because $\ket{\Psi}$ is static (Axiom~I), the reduced state $\rho_W = \operatorname{Tr}_R(\ket{\Psi}\!\bra{\Psi})$ is a fixed operator: $S(\rho_W)$ is a single number and does not change. The entropy that accumulates along relational time is therefore not the entropy of the static reduced state, but the entropy of the Witness's \emph{records}, conditional on the clock reading. To formalize this, we endow the Witness with internal structure.
+
+\begin{definition}[Clock--memory decomposition, relational step, and entropy increment]
+\label{def:clockmemory}
+Let the Witness factor as
+\begin{equation}
+\mathcal{H}_W = \mathcal{H}_C \otimes \mathcal{H}_M,
+\label{eq:CM}
+\end{equation}
+where $C$ is a clock and $M$ is a memory. The clock is non-interacting in the sense of Marletto--Vedral \cite{Marletto2017}, securing the internal consistency of the Page--Wootters conditioning (Section~\ref{sec:axiom2}); the memory is permitted to interact with $R$.
+
+A \emph{relational step} is a transition of the clock between consecutive mutually orthogonal clock states $\ket{w(\tau_k)} \perp \ket{w(\tau_{k+1})}$---the natural unit of distinguishable relational change, and precisely the unit whose duration the Margolus--Levitin bound constrains.
+
+The \emph{entropy increment per relational step} is the change in the von Neumann entropy of the memory's conditional state across one step:
+\begin{equation}
+\Delta S = S\bigl(\rho_M(\tau_{k+1})\bigr) - S\bigl(\rho_M(\tau_k)\bigr), \qquad
+\rho_M(\tau) = \operatorname{Tr}_R\bigl(\ket{\psi_{MR}(\tau)}\!\bra{\psi_{MR}(\tau)}\bigr),
+\label{eq:deltaS}
+\end{equation}
+where $\ket{\psi_{MR}(\tau)}$ is the normalized conditional state of $M \otimes R$ given clock reading $\ket{w(\tau)}$. Throughout the remainder of the paper, $\Delta S$ denotes this conditional record-entropy increment, measured in bits.
+\end{definition}
+
+\begin{remark}[Finite clocks]
+The definition of a relational step idealizes a clock with exactly orthogonal reading states. Finite-dimensional clocks realize orthogonal readings only approximately; quantitative limits on the accuracy of autonomous finite-sized quantum clocks are given by Woods, Silva, and Oppenheim \cite{Woods2019}. We work in the idealized limit and note that finite-clock corrections would soften, not eliminate, the bound derived below.
+\end{remark}
+
+\begin{remark}[Uniqueness, interaction, and the resolution of an apparent tension]
+\label{rem:tension}
+The Marletto--Vedral non-interaction condition \cite{Marletto2017} requires a non-interacting clock, while Landauer erasure is paradigmatically an interactive, dissipative process. These requirements would conflict if they were imposed on the same degree of freedom. The clock--memory decomposition (Definition~\ref{def:clockmemory}) resolves the tension by separating the roles: the clock $C$ is non-interacting, securing the validity of the Page--Wootters conditioning; the memory $M$ interacts with $R$ and bears the informational cost. Crucially, the entropy increment $\Delta S$ of Equation~\eqref{eq:deltaS} is a relational property of the static entanglement structure of $\ket{\Psi}$, conditioned on clock readings---not dynamical dissipation unfolding in an external time. No external time parameter is invoked anywhere in the construction.
+\end{remark}
+
+% --------------------------------------------------------------------
+\subsection{The optimal-witness time bound}
+\label{sec:bound}
+
+To anchor $\tau$ physically, we compose two established results under explicit modeling assumptions. One framing point first: the bound below \emph{presupposes}, rather than derives, relational time. The Margolus--Levitin inequality assumes a time parameter governing evolution; within the Page--Wootters setting it constrains evolution relative to the clock already constructed in Axiom~IV. What the bound adds is a link between the resolution of that clock and the Witness's record processing---it is a clock-resolution bound, not a derivation of time from entropy.
+
+\medskip
+\noindent\textbf{Landauer's Principle} \cite{Landauer1961} establishes the minimum energy cost of erasing (or irreversibly overwriting) $\Delta S$ bits of information at temperature $T$:
+\begin{equation}
+\Delta E \geq k_B T \ln 2 \cdot \Delta S.
+\label{eq:Landauer}
+\end{equation}
+
+\noindent\textbf{The Margolus--Levitin quantum speed limit} \cite{Margolus1998} bounds the minimum time for a quantum system with mean energy $\Delta E$ above its ground state to evolve to a distinguishable (orthogonal) state:
+\begin{equation}
+\Delta\tau \geq \frac{\pi\hbar}{2\,\Delta E}.
+\label{eq:ML}
+\end{equation}
+
+Note that direct substitution of the Landauer \emph{lower bound} into the \emph{denominator} of \eqref{eq:ML} does not yield a valid lower bound on $\Delta\tau$: a system consuming more energy than the Landauer minimum has a lower speed-limit floor. To obtain a definite relation between time and entropy, we model a thermodynamically optimal Witness:
+
+\begin{assumption}[Thermodynamic Optimality and Record Identification]
+\label{ass:opt}
+The Witness processes information at the Landauer limit: the energy consumed per relational step is exactly the erasure cost of the records overwritten in that step,
+\begin{equation}
+\Delta E = k_B T \ln 2 \cdot \Delta S.
+\label{eq:optimal}
+\end{equation}
+This assumption comprises two explicit identifications. \emph{(a) Record identification:} the record-entropy increment $\Delta S$ of Definition~\ref{def:clockmemory} is identified with bits irreversibly overwritten in the finite memory $M$---the Witness is modeled as maintaining records of $R$ in a bounded memory, so that each relational step requires overwriting prior records via a logically irreversible operation at Landauer cost. This identification is strictly stronger than a choice of units: the von Neumann entropy change of the conditional memory state and the number of logically irreversibly overwritten bits are distinct quantities that can diverge---overwriting one uniformly random bit with another leaves the memory entropy unchanged while still constituting a logically irreversible operation with Landauer cost. Part (a) restricts the model to witnesses for which the two quantities coincide. \emph{(b) Co-budgeting:} the Witness is modeled as an autonomous system in which a single energy resource drives both clock advancement and record overwriting, so that the dynamical energy available for clock orthogonalization per step equals the dissipative cost of the memory update in that step (see Remark~\ref{rem:energy}).
+\end{assumption}
+
+\begin{assumption}[Monotonic Records]
+\label{ass:mono}
+Along the sequence of clock readings $\tau_0, \tau_1, \ldots$, the conditional record entropy is non-decreasing: $\Delta S \geq 0$ at every step, with $\Delta S > 0$ on steps constituting relational change. This is an arrow-of-time postulate, not a theorem: the von Neumann entropy of the conditional memory state can in general decrease across clock readings. Marletto and Vedral impose the same monotone as a separate postulate to define the arrow of time within the Page--Wootters picture \cite{Marletto2017}; we adopt it explicitly. Steps with $\Delta S \leq 0$ lie outside the model's domain: the framework assigns them no relational duration.
+\end{assumption}
+
+\begin{proposition}[Clock-Resolution Bound for an Optimal Witness]
+\label{prop:bound}
+Under Assumptions~\ref{ass:opt} and \ref{ass:mono}, the duration of a relational step satisfies
+\begin{equation}
+\boxed{\;\Delta\tau_{\mathrm{opt}} \geq \frac{\pi\hbar}{2\, k_B T \ln 2 \cdot \Delta S}\;}
+\label{eq:taumin}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Substitute the equality \eqref{eq:optimal} into the Margolus--Levitin bound \eqref{eq:ML}, applied to the orthogonalization of the clock state that constitutes one relational step (Definition~\ref{def:clockmemory}).
+\end{proof}
+
+\begin{remark}[Physical interpretation]
+\label{rem:interp}
+Equation~\eqref{eq:taumin} is a \emph{lower bound} on the duration of a relational step: a Witness whose per-step energy budget is the Landauer cost (Assumption~\ref{ass:opt}) cannot complete a distinguishable clock transition faster than $\Delta\tau_{\mathrm{opt}}$. Two directional facts must be kept straight. First, the Margolus--Levitin inequality is a minimum-time bound; nothing in the framework bounds how \emph{slowly} a witness may tick---a system may evolve arbitrarily more slowly than its speed limit permits. Second, a non-optimal Witness with $\Delta E > k_B T \ln 2 \cdot \Delta S$ has a lower speed-limit floor and is therefore \emph{permitted}---not required---to tick faster than $\Delta\tau_{\mathrm{opt}}$. Among witnesses at fixed $\Delta S$, the thermodynamically optimal one has the most restrictive minimum step duration: energy efficiency is purchased at the price of the largest quantum-speed-limit floor.
+\end{remark}
+
+\begin{remark}[The energy identification]
+\label{rem:energy}
+This derivation identifies two physically distinct quantities: the dynamical energy $\langle\hat{H}\rangle - E_0$ driving unitary evolution in the Margolus--Levitin bound, and the dissipated heat $k_B T \ln 2 \cdot \Delta S$ of irreversible information erasure in the Landauer bound. A further structural feature deserves emphasis: the Margolus--Levitin bound is applied to the orthogonalization of the \emph{clock} factor $C$, while the Landauer cost attaches to the update channel of the \emph{memory} factor $M$---distinct subsystems. Assumption~\ref{ass:opt}(b) therefore asserts a co-budgeting condition appropriate to an autonomous witness driven by a single energy resource. This modeling choice has independent physical support: the accuracy of autonomous quantum clocks is known to be thermodynamically constrained, with clock resolution bounded by entropy production per tick \cite{Erker2017}. Nevertheless, the identification $\Delta E_{\mathrm{ML}} = \Delta E_{\mathrm{Landauer}}$ is a strong modeling assumption, not a derivation from first principles; constructing an explicit toy Hamiltonian on $\mathcal{H}_C \otimes \mathcal{H}_M \otimes \mathcal{H}_R$ realizing the co-budgeting condition is an open problem we leave to future work. The resulting bound is physically suggestive and dimensionally correct, but the strict equivalence between distinguishable-state evolution and information erasure remains heuristic in the general case.
+\end{remark}
+
+\begin{remark}[Scaling and the isolated limit]
+\label{rem:freeze}
+Equation~\eqref{eq:taumin} entails that the minimum step duration $\Delta\tau_{\mathrm{opt}}$ scales inversely with both temperature and entropy generation: hotter, more dissipative witnesses have lower speed-limit floors, permitting faster relational dynamics. As $\Delta S \to 0$, the floor diverges: within the optimal-witness model, a step generating no record entropy cannot be completed in any finite relational time. We state this consequence carefully---the divergence is a property of the modeled witness (Assumptions~\ref{ass:opt}--\ref{ass:mono}), not an unconditional theorem about isolated systems. Read interpretively, it is consistent with the global stasis of Axiom~I: a witness generating no records supports no distinguishable relational change, and, within this model, no relational time.
+\end{remark}
+
+\begin{remark}
+This result is a quantum-information-theoretic analogue of the thermal time hypothesis of Connes and Rovelli \cite{Connes1994}, which proposes that the flow of time in generally covariant quantum theories emerges from the modular automorphism of the thermal state. Both frameworks anchor temporal flow to thermodynamic structure; the present derivation does so via information-erasure bounds rather than modular theory.
+\end{remark}
+
+% --------------------------------------------------------------------
+\subsection{The temperature $T$}
+\label{sec:temperature}
+
+The temperature $T$ appearing in \eqref{eq:taumin} requires careful justification: because the global state satisfies the Hamiltonian constraint ($\hat{H}\ket{\Psi} = 0$), the reduced state $\rho_W$ does not automatically carry a physical temperature. Two routes are available.
+
+\medskip
+\noindent\textbf{The modular route.} Define $T$ via the modular Hamiltonian $K_W = -\ln \rho_W$, following the algebraic framework of Connes and Rovelli \cite{Connes1994}. This definition is intrinsic to $\rho_W$ and requires no assumption about thermalization. However, the KMS temperature associated with the modular automorphism is $\beta = 1$ by construction in modular time; it acquires nontrivial physical content only when compared to an independent time flow. Since time is itself defined by Axiom~IV using $T$, there is a circularity risk: the modular temperature requires a time flow for physical interpretation, but time requires $T$. This circularity is the same one that lives within the Connes--Rovelli thermal time hypothesis itself. Additionally, the modular Hamiltonian requires $\rho_W$ to be faithful (no zero eigenvalues), which may not hold for all physically relevant states.
+
+\medskip
+\noindent\textbf{The ETH route.} Invoke the Eigenstate Thermalization Hypothesis (ETH) \cite{Srednicki1994}, under which $R$ acts as a thermalizing bath for $W$ and the reduced state $\rho_W$ is approximately thermal at a well-defined physical temperature. We emphasize that the version of ETH invoked here is its \emph{spectral} formulation---a static statement about the matrix elements of local observables in the energy eigenbasis of $\hat{H}$---so no external time parameter is presupposed. This route avoids the modular circularity by grounding $T$ in the spectral properties of $\hat{H}$ restricted to the relevant energy shell, but introduces an additional physical assumption about the thermalization properties of the global Hamiltonian.
+
+\medskip
+Both routes yield a consistent framework. We regard the choice between them as open and note that the framework's structural conclusions---the coupling between entropy generation and relational time---hold under either interpretation of $T$.
+
+% ====================================================================
+\section{Axiom V: Locating the Hard Problem}
+\label{sec:axiom5}
+
+We possess a physical system generating epistemic entropy ($\Delta S > 0$) and a relational parameter tracking it ($\tau$). However, this does not explain \emph{why} $\tau$ is phenomenologically experienced as a flowing ``now.''
+
+The contribution of this framework is not to solve the hard problem of consciousness, but to \emph{locate it with mathematical precision}---to define the structural constraints that any future solution must satisfy.
+
+We first fix the physical category, and care is required in choosing its objects. The reduced state $\rho_W$ alone does not determine the Witness's correlations with $R$: distinct global states sharing the same reduced state can differ in their $W{:}R$ entanglement structure, so witnessing status (Axiom~III) is not a function of $\rho_W$. Accordingly, let $\mathbf{Phys}$ be the category whose objects are triples
+\begin{equation}
+\bigl(\rho_{WR},\; \mathcal{H}_W \otimes \mathcal{H}_R,\; \mathcal{F}_W\bigr),
+\end{equation}
+consisting of a global state on the designated bipartition (pure in the setting of Axiom~I, but stated generally) together with the internal factorization $\mathcal{F}_W$ of $\mathcal{H}_W$ fixed in Section~\ref{sec:topo}. Morphisms are quantum channels implementable by local operations and classical communication (LOCC) \emph{with respect to the $W{:}R$ bipartition}: local operations on $W$ and on $R$, coordinated by classical communication between them. Composition is channel composition and identities are the identity channels. Where we write $F(\rho_W)$ below, it abbreviates the action of $F$ on the underlying object of $\mathbf{Phys}$, with $\rho_W = \operatorname{Tr}_R(\rho_{WR})$.
+
+Because LOCC cannot increase entanglement, the witnessing objects---those with $E_{\mathcal{N}}(W{:}R) > 0$, per Axiom~III---form a full subcategory $\mathbf{Phys}_+$ that is \emph{not} closed under LOCC: a morphism may carry an entangled state to a separable one. We regard this as structurally meaningful rather than defective: morphisms that exit $\mathbf{Phys}_+$ model precisely the physical transitions that extinguish witnessing (compare the anesthesia transition of Section~\ref{sec:empirical}).
+
+\begin{axiom}[The Functor Constraint]
+Let $\mathbf{Phen}$ be the (as yet formally undefined) category of phenomenal experience. The hard problem of consciousness is the \emph{joint} problem of:
+\begin{enumerate}[label=(\roman*)]
+    \item defining the category $\mathbf{Phen}$---its objects (experiential states) and morphisms (transitions or relations between experiences); and
+    \item constructing a structure-preserving functor $F$ mapping the physical generation of entropy into the subjective generation of experience:
+    \begin{equation}
+    F : \mathbf{Phys} \longrightarrow \mathbf{Phen},
+    \label{eq:functor}
+    \end{equation}
+    such that entropy-generating LOCC morphisms in $\mathbf{Phys}_+$ are carried to now-generating morphisms in $\mathbf{Phen}$, and morphisms exiting $\mathbf{Phys}_+$ are carried to morphisms extinguishing experience.
+\end{enumerate}
+\end{axiom}
+
+The framework does not presume that only $F$ remains to be defined; the formalization of $\mathbf{Phen}$ is equally (and perhaps more fundamentally) open. What the framework provides is the constraint that $F$ must be a \emph{functor}---it must preserve the compositional structure of LOCC morphisms in $\mathbf{Phys}$---and that its classification of experience must factor through the entanglement topology of $W$, in the commuting-square sense of Hypothesis~\ref{hyp:twolevel} (Section~\ref{sec:topo}).
+
+While Integrated Information Theory (IIT) \cite{Tononi2016} attempts to quantify the physical correlates of consciousness via the integrated information $\Phi$ of a system's causal architecture, the Relational Witnessing Framework proposes a different structural approach: that $F$ factors through a topological invariant of the entanglement structure internal to $W$.
+
+\begin{remark}[Necessary but not sufficient]
+Non-zero entanglement ($E_{\mathcal{N}}(W{:}R) > 0$) is a formally \emph{necessary} condition for witnessing within this framework, but it is not claimed to be \emph{sufficient} for phenomenal experience. A single qubit entangled with a photon satisfies Axiom~III but is not thereby conscious. The emergence of phenomenal experience likely requires sufficient topological complexity within the entanglement complex $\mathcal{K}_W$---for instance, nontrivial persistent homology in dimension $k \geq 1$ (Section~\ref{sec:topo}). The framework constrains the form that any sufficiency condition must take, but does not yet classify the threshold of topological complexity required.
+\end{remark}
+
+% ====================================================================
+\section{The Topological Hypothesis: Formalizing $\mathcal{G}_W$}
+\label{sec:topo}
+
+We now define the entanglement graph $\mathcal{G}_W$ and its topological invariants. This section is conjectural and constitutes a research program, not a derivation.
+
+\medskip
+\noindent\textbf{Relation to prior work.} The construction of simplicial complexes from multipartite quantum states, with pairwise entanglement or correlation measures as filtration parameters, is an established direction in topological data analysis. Di Pierro, Mancini, Memarzadeh, and Mengoni \cite{DiPierro2018} first proposed the use of bipartite entanglement as a distance for Vietoris--Rips filtrations on multipartite qubit states; Mengoni, Memarzadeh, Di Pierro, and Mancini \cite{Mengoni2019} developed the approach further. Olsthoorn \cite{Olsthoorn2023} constructed filtered simplicial complexes from inverse quantum mutual information and applied persistent homology to condensed-matter spin systems. Hamilton and Leditzky \cite{Hamilton2024} refined the construction using \v{C}ech complexes weighted by Tsallis-deformed total correlation, defining an Integrated Euler Characteristic as a topological summary of multipartite entanglement; operational interpretations of this summary via distillable-entanglement bounds have subsequently been developed \cite{Spellman2025}. The construction given below specializes this general program to logarithmic negativity as the pairwise weight (motivated by Axiom~III, where mixedness of the reduced state is the generic case), adopts the flag complex for its face-closure property and computational tractability, and embeds the resulting signature within the broader categorical framework of Axiom~V---specifically, as the invariant through which the functor $F$ is hypothesized to factor (Section~\ref{sec:axiom5}). The application domain (relational time and phenomenal experience) is also distinct: prior work has studied abstract multipartite states and condensed-matter spin systems, not the use of entanglement topology as a constraint on theories of subjective experience.
+
+% --------------------------------------------------------------------
+\subsection{Internal Factorization of $W$}
+\label{sec:internal}
+
+For the entanglement structure internal to $W$ to be well-defined, $\mathcal{H}_W$ must factor into subsystems:
+\begin{equation}
+\mathcal{H}_W = \mathcal{H}_1 \otimes \mathcal{H}_2 \otimes \cdots \otimes \mathcal{H}_n.
+\label{eq:internal}
+\end{equation}
+The same factorization-dependence issue identified by Zanardi et al.\ \cite{Zanardi2004} applies here. We resolve it by recursive application of the algebraic criterion from Section~\ref{sec:axiom2}: the preferred internal factorization is the one with respect to which the Witness's internal observables act locally. In the emergent-time regime, this coincides with the sub-factorization stabilized by internal decoherence, as in Zurek's einselection program \cite{Zurek2009}.
+
+% --------------------------------------------------------------------
+\subsection{The Entanglement Complex $\mathcal{K}_W$}
+\label{sec:complex}
+
+\begin{definition}[Entanglement Complex]
+\label{def:KW}
+Given the internal factorization \eqref{eq:internal} and the reduced state $\rho_W$, we define the \emph{entanglement complex} $\mathcal{K}_W$ as a \emph{flag complex} (clique complex) constructed from the weighted 1-skeleton of pairwise entanglement:
+\begin{itemize}
+    \item \textbf{0-simplices} (vertices): individual subsystems $\{1, 2, \ldots, n\}$.
+    \item \textbf{1-simplices} (edges): pairs $(i,j)$ with weight given by the pairwise logarithmic negativity
+    \begin{equation}
+    w_{ij} = E_{\mathcal{N}}(i{:}j) = \log \bigl\lVert \rho_{ij}^{T_i} \bigr\rVert_1,
+    \label{eq:negativity}
+    \end{equation}
+    where $\rho_{ij} = \operatorname{Tr}_{\{i,j\}^c}(\rho_W)$ is the reduced state of the pair (obtained by tracing out all subsystems other than $i$ and $j$) and $T_i$ denotes partial transpose with respect to subsystem $i$. An edge $(i,j)$ is present if and only if $w_{ij} > 0$.
+    \item \textbf{$k$-simplices} ($k \geq 2$): a subset $\{i_1, \ldots, i_{k+1}\}$ is included as a $k$-simplex if and only if all $\binom{k+1}{2}$ pairwise edges $(i_a, i_b)$ are present. The weight of a higher simplex is the minimum of its edge weights:
+    \begin{equation}
+    w(\sigma) = \min_{\{a,b\} \subset \sigma} w_{ab}.
+    \label{eq:minweight}
+    \end{equation}
+\end{itemize}
+Equivalently: for each threshold $\varepsilon > 0$, the complex $\mathcal{K}_W^\varepsilon$ is the flag complex of the graph $\mathcal{G}_W^\varepsilon$ whose edges are the pairs with $w_{ij} \geq \varepsilon$. The min-weight rule \eqref{eq:minweight} makes the two descriptions coincide and guarantees that the thresholded complexes are nested: $\varepsilon' \leq \varepsilon \implies \mathcal{K}_W^\varepsilon \subseteq \mathcal{K}_W^{\varepsilon'}$.
+\end{definition}
+
+The choice of logarithmic negativity is consistent with Axiom~III: it detects genuine quantum entanglement and is zero for separable states. The flag complex construction is adopted for two reasons. First, it guarantees the face-closure property required of a valid simplicial complex: every face of an included simplex is itself included. An alternative construction weighting higher simplices by genuine multipartite entanglement measures (e.g., the $n$-tangle \cite{Coffman2000} or genuine multipartite negativity \cite{Jungnitsch2011}) can violate this property---a GHZ state of three qubits, for instance, possesses maximum tripartite entanglement but zero pairwise entanglement after partial trace, yielding a 2-simplex without its 1-simplex faces. Second, the flag complex is entirely determined by the 1-skeleton and is computationally tractable, since computing genuine multipartite entanglement measures for $k \geq 2$ is in general NP-hard for large systems.
+
+\begin{remark}
+\label{rem:flag}
+The flag complex may fail to capture genuinely multipartite entanglement that exists independently of pairwise correlations; this limitation is intrinsic to any construction derived from pair marginals and is well-known in the broader persistent-homology-of-entanglement literature \cite{DiPierro2018, Hamilton2024}. All topological signatures defined below are therefore signatures of the \emph{pairwise-negativity topology} of $W$, not of its integrated quantum structure in full generality. A further limitation concerns bound entanglement: logarithmic negativity detects only NPT entanglement. For the pure global $W{:}R$ cut this is no restriction (pure PPT states are product states), but the internal pair reductions $\rho_{ij}$ are generically mixed, and PPT bound-entangled pairs have $E_{\mathcal{N}} = 0$; such entanglement produces no edge and is invisible to $\mathcal{K}_W$. We regard a richer construction that accommodates GHZ-type and bound-entangled states---while preserving face-closure---as an important open problem in the formalization of $\mathcal{K}_W$.
+\end{remark}
+
+% --------------------------------------------------------------------
+\subsection{Topological Invariants via Persistent Homology}
+\label{sec:persistence}
+
+Rather than choosing an arbitrary threshold to binarize the weighted complex, we apply \emph{persistent homology} \cite{Edelsbrunner2002, Zomorodian2005}, which tracks how topological features---connected components ($H_0$), loops ($H_1$), voids ($H_2$), and higher-dimensional cavities ($H_k$)---appear and disappear as the filtration parameter $\varepsilon$ sweeps from the maximum weight down to zero.
+
+At threshold $\varepsilon$, include all simplices $\sigma \in \mathcal{K}_W$ with weight $w(\sigma) \geq \varepsilon$, where higher-simplex weights are given by \eqref{eq:minweight}. As $\varepsilon$ decreases, more simplices enter the complex, and the homology changes. Each topological feature is born at some $\varepsilon_b$ and dies at some $\varepsilon_d < \varepsilon_b$, yielding an interval $[\varepsilon_d, \varepsilon_b)$.
+
+\begin{definition}[Topological Signature]
+The \emph{topological signature} of the Witness is the collection of persistence diagrams across all homological dimensions:
+\begin{equation}
+\chi(\mathcal{K}_W) = \bigl\{ \mathrm{Dgm}_k(\mathcal{K}_W) \bigr\}_{k=0}^{\dim \mathcal{K}_W},
+\label{eq:persistence}
+\end{equation}
+where each $\mathrm{Dgm}_k$ is a multiset of intervals $[\varepsilon_d, \varepsilon_b)$ recording the birth and death of $k$-dimensional features.
+\end{definition}
+
+Persistent homology has the desired properties for our framework:
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Stability:} small perturbations in the entanglement weights produce small changes in the persistence diagrams (with respect to the bottleneck or Wasserstein distance \cite{CohenSteiner2007}). This ensures robustness under minor fluctuations.
+    \item \textbf{Sensitivity to structure:} qualitative changes in the pairwise-entanglement topology (e.g., severing a cluster of connections, as under anesthesia) produce measurable changes in the persistence diagrams.
+    \item \textbf{Computability:} persistent homology is algorithmically tractable for finite complexes.
+\end{enumerate}
+
+% --------------------------------------------------------------------
+\subsection{Class vs.\ Content: The Two-Level Structure}
+\label{sec:twolevel}
+
+The persistent homology framework naturally formalizes the distinction between the \emph{class} of experience and its \emph{content}.
+
+Let $\mathcal{B}$ be the space of persistence diagrams, equipped with the Wasserstein metric $d_W$. For each point $b \in \mathcal{B}$, define the \emph{level set}:
+\begin{equation}
+\mathcal{F}_b = \bigl\{ \rho_W \;\big|\; \chi(\mathcal{K}_W[\rho_W]) = b \bigr\},
+\label{eq:levelset}
+\end{equation}
+the set of all Witness states whose entanglement complex has topological signature $b$.
+
+\begin{hypothesis}[Two-Level Structure]
+\label{hyp:twolevel}
+There exist a category $\mathbf{Classes}$ of experience-classes, a classification functor $C : \mathbf{Phen} \to \mathbf{Classes}$ sending each experience to its structural class (e.g., wakefulness vs.\ dreamless sleep vs.\ anesthesia), and a class-assignment map $G : \mathcal{B} \to \mathbf{Classes}$ (regarding $\mathcal{B}$ as a category, e.g., discretely), such that the square
+\begin{center}
+\begin{tikzcd}[column sep=large]
+\mathbf{Phys} \arrow[r, "F"] \arrow[d, "\chi"'] & \mathbf{Phen} \arrow[d, "C"] \\
+\mathcal{B} \arrow[r, "G"'] & \mathbf{Classes}
+\end{tikzcd}
+\end{center}
+commutes:
+\begin{equation}
+C \circ F = G \circ \chi.
+\label{eq:twoleveleq}
+\end{equation}
+Equivalently: any two Witness states with equal topological signatures are mapped by $F$ to experiences of the same structural class, while their phenomenal contents---distinguished within the fibers of $C$---remain free to differ.
+\end{hypothesis}
+
+\begin{remark}[Why a commuting square]
+\label{rem:vacuity}
+An earlier formulation of this hypothesis asserted a factorization $F(\rho_W) = F'(\chi(\mathcal{K}_W), \rho_W)$. That formulation is mathematically vacuous: because $F'$ receives the complete state as its second argument, \emph{every} function factors this way, simply by ignoring its first argument. The commuting square \eqref{eq:twoleveleq} imposes genuine content: it forces the experience-\emph{class} to depend on the state only through the topological signature. It also renders the hypothesis falsifiable in principle: exhibiting two Witness states with identical persistence diagrams whose experience-classes differ (by whatever operational criterion individuates classes) would refute it.
+\end{remark}
+
+We label this a hypothesis rather than a proposition: since neither $F$ nor $\mathbf{Phen}$ has been constructed (Axiom~V), no property of $F$ can currently be proven; the commuting square \eqref{eq:twoleveleq} is a structural constraint the framework imposes on any candidate triple $(F, C, G)$.
+
+This structure is that of a surjection $\pi : \mathcal{E} \to \mathcal{B}$ with level sets, where $\mathcal{E}$ is the total space of Witness states, $\mathcal{B}$ is the base space of topological signatures, and each $\mathcal{F}_b = \pi^{-1}(b)$ is the set of states sharing that signature. The map $\rho_W \mapsto \chi(\mathcal{K}_W)$ is continuous: logarithmic negativity is continuous in the trace norm, so the entanglement weights $w_{ij}$ vary continuously with $\rho_W$, and the stability theorem for persistent homology \cite{CohenSteiner2007} then makes the persistence diagrams Lipschitz with respect to sup-norm perturbations of the filtration values. Whether the level sets $\mathcal{F}_b$ are locally homeomorphic to each other---the condition required for a genuine fiber bundle---is an open question. If local triviality holds, $\pi$ acquires the full structure of a fiber bundle; we conjecture but do not prove this.
+
+\medskip
+The Topological Hypothesis, as developed through Sections~\ref{sec:internal}--\ref{sec:twolevel}, provides the following: a well-defined simplicial complex $\mathcal{K}_W$ encoding the pairwise-entanglement structure of the Witness, a stable topological invariant $\chi(\mathcal{K}_W)$ via persistent homology, and a commuting-square constraint (Hypothesis~\ref{hyp:twolevel}) forcing the experience-class assigned by any candidate $F$ to depend on the state only through its topological signature. Whether the space of topological signatures $\mathcal{B}$ itself has interesting higher homotopy structure---and in particular whether such structure might exhibit periodicity---is an open problem explored in Appendix~\ref{app:bott}.
+
+% ====================================================================
+\section{Structural Consequences and Empirical Constraints}
+\label{sec:empirical}
+
+We outline three structural consequences of the framework. The first two are interpretive---they follow from the formalism but do not predict deviations from standard quantum mechanics. The third is an empirical research target, subject to the caveats stated.
+
+\begin{enumerate}
+    \item \textbf{Relational time in the isolated limit.} For a Witness whose record-entropy generation vanishes ($\Delta S \to 0$), Equation~\eqref{eq:taumin} yields $\Delta\tau_{\mathrm{opt}} \to \infty$: within the optimal-witness model (Assumptions~\ref{ass:opt}--\ref{ass:mono}), no distinguishable relational step completes in finite time, and relational time ceases. This is not a temporal anomaly measurable against an external clock; it is the model's statement that a system generating no conditional record entropy supports no relational time parameter. This is consistent with the global stasis of the Wheeler--DeWitt constraint (Axiom~I) and with the Page--Wootters mechanism, in which time is strictly relational. We note that this consequence is \emph{interpretive}: it does not predict any observable deviation from the Schr\"{o}dinger equation's predictions for isolated systems. The framework is empirically equivalent to standard quantum mechanics in this regime; the difference is ontological, not operational.
+
+    \item \textbf{The entanglement prerequisite for experience.} A system completely isolated into a pure state ($S = 0$, $E_{\mathcal{N}} = 0$) cannot, by definition, possess a temporal ``now'' or act as a formal Witness. Genuine quantum entanglement is a strict physical prerequisite for phenomenal experience within this framework.
+
+    \item \textbf{Topological transitions under anesthesia (research target).} If the class of experience is determined by the persistence diagrams $\chi(\mathcal{K}_W)$, then the transition from wakefulness to anesthesia-induced unconsciousness should correspond to a measurable topological transition in the entanglement structure---specifically, a collapse of the persistent homology (loss of long-lived features in $H_1$ and higher). Three caveats are essential. First, the framework's invariant is defined on quantum entanglement structure, while existing empirical consciousness indices---most notably the perturbational complexity index of Casali et al.\ \cite{Casali2013}---are classical complexity measures; they can serve at best as proxies for the quantity the framework specifies. Second, the test presupposes that the witness's physical substrate instantiates measurable entanglement structure at the relevant scales; whether this holds for biological systems is an open empirical question that the framework does not settle. Third, because $\chi(\mathcal{K}_W)$ is constructed from pairwise negativities (Remark~\ref{rem:flag}), a collapse of persistent $H_1$ is a signature of changes in the \emph{pairwise-entanglement topology} specifically, and is blind both to genuinely multipartite entanglement of GHZ type and to pairwise PPT bound entanglement (Remark~\ref{rem:flag}); the target is a topological transition in pairwise-negativity structure, not in integrated quantum structure per se. Within those caveats, the constraint is in principle probeable via quantum-information-theoretic analysis of the relevant substrate, extending existing work connecting complexity measures to consciousness \cite{Casali2013}. We present it as an empirical research target rather than a near-term experimental prediction.
+\end{enumerate}
+
+% ====================================================================
+\section{The Synthesized Formalism}
+\label{sec:synthesis}
+
+The Relational Witnessing Framework proposes that witnessing, entanglement entropy, and relational time share a common structural origin. We now state this claim at its defensible strength. The epistemic bipartition $\mathcal{H}_W \otimes \mathcal{H}_R$ canonically induces, via the partial trace $\operatorname{Tr}_R$, both the epistemic boundary of the Witness (what the subsystem can access) and the mixed state $\rho_W$ whose entanglement entropy $S(\rho_W) > 0$ is fixed by the cut alone. Relational time is erected on the same cut, but not by the cut alone: the conditioning construction of Axiom~IV additionally requires the internal factorization $\mathcal{H}_W = \mathcal{H}_C \otimes \mathcal{H}_M$, the selection of the clock subsystem and its reading states, the conditional record structure of Definition~\ref{def:clockmemory}, and the monotonicity postulate of Assumption~\ref{ass:mono}.
+
+The bipartition is thus the common prerequisite of all three concepts: witnessing and entanglement entropy follow from it canonically, while relational time requires explicitly enumerated clock--memory structure built upon it. This asymmetry is itself informative---it locates exactly which further physical structure a timeless universe must contain for time to emerge within it. We also emphasize that the static entanglement entropy $S(\rho_W)$ and the conditional record increments $\Delta S$ (Definition~\ref{def:clockmemory}) are distinct quantities and remain distinct in this summary. A stronger formulation would require proving that witnessing, entropy, and time are isomorphic as objects in some encompassing category---that there exists a formal sense in which any one determines the other two. We regard this stronger claim as a conjecture motivated by the common-origin structure, not a proven theorem.
+
+The synthesized formalism is:
+\begin{align}
+\hat{H}\ket{\Psi} &= 0 &&\text{(The Timeless Whole)} \label{eq:syn1}\\[4pt]
+\mathcal{H}_{\mathrm{total}} &= \mathcal{H}_W \otimes \mathcal{H}_R &&\text{(The Algebraic Bipartition)} \label{eq:syn2}\\[4pt]
+\rho_W &= \operatorname{Tr}_R\!\bigl(\ket{\Psi}\!\bra{\Psi}\bigr), \quad E_{\mathcal{N}}(W{:}R) > 0 &&\text{(The Epistemic Cut)} \label{eq:syn3}\\[4pt]
+\Delta\tau_{\mathrm{opt}} &\geq \frac{\pi\hbar}{2\, k_B T \ln 2 \cdot \Delta S} &&\text{(Relational Time)} \label{eq:syn4}\\[4pt]
+C \circ F &= G \circ \chi &&\text{(The Topological Constraint)} \label{eq:syn5}
+\end{align}
+
+% ====================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+This framework makes a specific structural claim: that time, entropy, and witnessing are not three unrelated phenomena requiring three unrelated explanations, but three constructions sharing a common structural origin in the epistemic bipartition of a timeless whole---witnessing and entanglement entropy following canonically from the cut via the partial trace, and relational time erected on the same cut through explicitly enumerated clock--memory structure (Section~\ref{sec:synthesis}). The common-origin claim is demonstrated within the stipulated construction; the stronger claim of formal isomorphism remains an open conjecture. The deductive core (Axioms~I--IV) rests on established physics---the Wheeler--DeWitt constraint, the Page--Wootters mechanism, Landauer's principle, and the Margolus--Levitin speed limit---composed under three explicit modeling assumptions: the thermodynamic optimality and record identification of the Witness (Assumption~\ref{ass:opt}), the co-budgeting of clock and memory energy within an autonomous witness (Assumption~\ref{ass:opt}(b), Remark~\ref{rem:energy}), and the monotonicity of records that supplies the arrow of time (Assumption~\ref{ass:mono}). The conjectural extension (Axiom~V and the Topological Hypothesis) proposes that the hard problem of consciousness can be located---if not yet solved---as the joint problem of defining both the category of phenomenal experience and a structure-preserving functor from the category of witness states into it, and that the experience-class assigned by any such functor factors through the persistent homology of the entanglement complex, in the commuting-square sense of Hypothesis~\ref{hyp:twolevel}.
+
+We acknowledge the most dangerous foundational objection directly: the framework's conclusions depend on the choice of tensor product structure (the bipartition), and different factorizations yield different witnesses, entropies, and time parameters. If the preferred factorization is not uniquely determined, the framework's outputs may be artifacts of a decomposition choice rather than features of reality. We have offered an algebraic criterion---observable-induced factorization together with the physical interpretation of the observables (Definition~\ref{def:factorization})---as the primary selection principle. The Marletto--Vedral non-interaction condition \cite{Marletto2017} supplements this for the clock factor, though recent work argues that non-interaction alone cannot carry the resolution \cite{Stoica2026}; we read that result as reinforcing, rather than undermining, the primacy of the observable-algebra criterion, since Stoica's proposed resolution---fixing the physical meaning of the observables---is the criterion adopted here. Whether this fully resolves the ambiguity for the remaining factors---in particular the memory factor and the internal factorization of Section~\ref{sec:internal}---is an open question. The framework stands or falls on the defensibility of its factorization criterion.
+
+The framework connects naturally to several active research programs: the quantum reference frame formalism of H\"{o}hn, Smith, and Lock \cite{Hohn2021}, which provides a rigorous foundation for the Page--Wootters mechanism; the thermal time hypothesis of Connes and Rovelli \cite{Connes1994}, which similarly anchors temporal flow to thermodynamic structure; the thermodynamics of autonomous quantum clocks \cite{Erker2017, Woods2019}, which independently couples clock resolution to entropy production; the ER\,=\,EPR program of Maldacena and Susskind \cite{Maldacena2013} and Van~Raamsdonk's entanglement--geometry correspondence \cite{VanRaamsdonk2010}, which suggest that entanglement entropy generates spatial geometry as well as time; and topological entanglement entropy in the sense of Kitaev and Preskill \cite{Kitaev2006}, which provides precedent for extracting topological invariants from entanglement structure.
+
+Whether the functor $F$ can be explicitly constructed, and whether the space of topological signatures exhibits further structure (see Appendix~\ref{app:bott}), are open mathematical questions. What the Relational Witnessing Framework provides is the precise scaffold---the categorical, topological, and information-theoretic constraints---that any such construction must satisfy.
+
+% ====================================================================
+\appendix
+\section{Open Problem: Periodicity in the Entanglement Topology}
+\label{app:bott}
+
+This appendix poses a speculative but precise open problem motivated by the topological framework of Section~\ref{sec:topo}. It is structurally independent of the main results: the framework's deductive core (Axioms~I--IV) and the Topological Hypothesis (Section~\ref{sec:topo}, through the two-level structure of Section~\ref{sec:twolevel}) do not depend on the conjecture stated here.
+
+\medskip
+The mathematician Raoul Bott identified a deep periodicity in the homotopy groups of the classical groups: $\pi_{k+8}(O) \cong \pi_k(O)$ and $\pi_{k+2}(U) \cong \pi_k(U)$ \cite{Bott1959}. This periodicity governs the classification of fiber bundles and the structure of $K$-theory. We ask whether an analogous periodicity appears in the topology of entanglement.
+
+\begin{conjecture}[Stable Periodicity in Entanglement Topology]
+\label{conj:bott}
+Let $\mathcal{B}_n$ denote the space of topological signatures $\chi(\mathcal{K}_W)$ realizable by Witnesses with $n$ internal subsystems. Suppose there exist canonical stabilization maps $\iota_n : \mathcal{B}_n \to \mathcal{B}_{n+1}$ (for instance, induced by adjoining a decoupled subsystem), and let $\mathcal{B}_\infty = \operatorname{colim}_n \mathcal{B}_n$ denote the stable space. Then the homotopy groups of $\mathcal{B}_\infty$ exhibit periodicity:
+\begin{equation}
+\pi_{k+p}(\mathcal{B}_\infty) \cong \pi_k(\mathcal{B}_\infty) \quad \text{for some fixed period } p,
+\label{eq:bottconj}
+\end{equation}
+reflecting a fundamental periodicity in the structural classes of entanglement topology available to witnessing systems in the large-complexity limit. The existence and canonicity of the stabilization maps $\iota_n$ is part of the conjecture, not a given.
+\end{conjecture}
+
+If true, this would imply that the ``menu'' of structurally distinct experience-classes is not unbounded but recurs with a characteristic period---that beyond a certain complexity, new subsystems do not generate fundamentally new topological classes, but repeat existing ones at higher resolution.
+
+A natural starting point would be to show that the entanglement complexes $\mathcal{K}_W$, equipped with the local Hilbert spaces $\mathcal{H}_i$ as fibers over their vertices, define complex vector bundles. Rank-$n$ complex vector bundles are classified by maps to $BU(n)$; passing to the stable limit $BU = \operatorname{colim}_n BU(n)$, Bott periodicity takes the form $\pi_{k+2}(BU) \cong \pi_k(BU)$ for $k \geq 1$. We state plainly, however, what such a construction would and would not accomplish. A map $\mathcal{B}_\infty \to BU$ alone would \emph{not} suffice: it induces homomorphisms $\pi_k(\mathcal{B}_\infty) \to \pi_k(BU)$, and a homomorphism into a periodic family of groups transfers no periodicity back to its source. What would suffice is substantially stronger structure: a homotopy equivalence between $\mathcal{B}_\infty$ (or a distinguished subspace of it) and a periodic space such as $BU$ or a loop space thereof; an infinite-loop-space or spectrum structure on $\mathcal{B}_\infty$; or a stable $K$-theoretic identification of the realizable signatures. Analogous applications of $K$-theoretic periodicity to physical quantum systems have been developed, most notably in Kitaev's periodic-table classification of topological insulators and superconductors \cite{Kitaev2009}, which grounds the plausibility---though not the validity---of seeking such an identification.
+
+Two significant obstacles must be acknowledged:
+
+\begin{enumerate}
+    \item \textbf{Transition functions.} A collection of vector spaces over vertices does not constitute a vector bundle without \emph{transition functions} along the edges that glue the fibers together. To rigorously map $\mathcal{K}_W$ to $BU(n)$, future work must define these transition functions---potentially utilizing the local modular flow or the entanglement Hamiltonian $K_{ij} = -\ln \rho_{ij}$ to provide the requisite holonomy between $\mathcal{H}_i$ and $\mathcal{H}_j$ along each 1-simplex. Without such transition functions, the bundle is trivial and the conjecture is void.
+
+    \item \textbf{Contractibility.} The space of persistence diagrams equipped with the Wasserstein or bottleneck metric is known to be contractible for certain natural filtrations \cite{Mileyko2011}. If $\mathcal{B}_\infty$ is contractible, then $\pi_k(\mathcal{B}_\infty) = 0$ for all $k \geq 1$, and the periodicity conjecture is trivially satisfied ($0 \cong 0$) but content-free. The conjecture has nontrivial content only if the relevant subspace---the persistence diagrams \emph{actually realizable} by entanglement complexes of $n$-partite quantum states, in the stable limit---is non-contractible. Determining the homotopy type of this physically realizable subspace is an open problem at the intersection of topological data analysis, $K$-theory, and quantum information theory.
+\end{enumerate}
+
+We state this conjecture because it is precise, falsifiable, and---if true---would have profound consequences for the structure of the functor $F$. But we separate it from the main body of the paper to make clear that the Relational Witnessing Framework does not depend on it.
+
+% ====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{DeWitt1967}
+B.~S.~DeWitt, ``Quantum Theory of Gravity. I. The Canonical Theory,'' \textit{Phys.\ Rev.}\ \textbf{160}, 1113 (1967).
+
+\bibitem{Zanardi2004}
+P.~Zanardi, D.~A.~Lidar, and S.~Lloyd, ``Quantum tensor product structures are observable induced,'' \textit{Phys.\ Rev.\ Lett.}\ \textbf{92}, 060402 (2004).
+
+\bibitem{Zurek2009}
+W.~H.~Zurek, ``Quantum Darwinism,'' \textit{Nature Phys.}\ \textbf{5}, 181 (2009).
+
+\bibitem{Page1983}
+D.~N.~Page and W.~K.~Wootters, ``Evolution without evolution: Dynamics described by stationary observables,'' \textit{Phys.\ Rev.\ D}\ \textbf{27}, 2885 (1983).
+
+\bibitem{Marletto2017}
+C.~Marletto and V.~Vedral, ``Evolution without evolution and without ambiguities,'' \textit{Phys.\ Rev.\ D}\ \textbf{95}, 043510 (2017), arXiv:1610.04773.
+
+\bibitem{Stoica2026}
+O.~C.~Stoica, ``The clock ambiguity problem: extended or extinguished?'' arXiv:2604.21805 (2026).
+
+\bibitem{Giovannetti2015}
+V.~Giovannetti, S.~Lloyd, and L.~Maccone, ``Quantum time,'' \textit{Phys.\ Rev.\ D}\ \textbf{92}, 045033 (2015).
+
+\bibitem{Landauer1961}
+R.~Landauer, ``Irreversibility and Heat Generation in the Computing Process,'' \textit{IBM J.\ Res.\ Dev.}\ \textbf{5}, 183 (1961).
+
+\bibitem{Margolus1998}
+N.~Margolus and L.~B.~Levitin, ``The maximum speed of dynamical evolution,'' \textit{Physica D}\ \textbf{120}, 188 (1998).
+
+\bibitem{Woods2019}
+M.~P.~Woods, R.~Silva, and J.~Oppenheim, ``Autonomous quantum machines and finite-sized clocks,'' \textit{Ann.\ Henri Poincar\'{e}}\ \textbf{20}, 125 (2019).
+
+\bibitem{Erker2017}
+P.~Erker, M.~T.~Mitchison, R.~Silva, M.~P.~Woods, N.~Brunner, and M.~Huber, ``Autonomous quantum clocks: does thermodynamics limit our ability to measure time?'' \textit{Phys.\ Rev.\ X}\ \textbf{7}, 031022 (2017).
+
+\bibitem{Connes1994}
+A.~Connes and C.~Rovelli, ``Von Neumann algebra automorphisms and time--thermodynamics relation in generally covariant quantum theories,'' \textit{Class.\ Quantum Grav.}\ \textbf{11}, 2899 (1994).
+
+\bibitem{Srednicki1994}
+M.~Srednicki, ``Chaos and quantum thermalization,'' \textit{Phys.\ Rev.\ E}\ \textbf{50}, 888 (1994).
+
+\bibitem{Tononi2016}
+G.~Tononi, M.~Boly, M.~Massimini, and C.~Koch, ``Integrated information theory: from consciousness to its physical substrate,'' \textit{Nature Rev.\ Neurosci.}\ \textbf{17}, 450 (2016).
+
+\bibitem{Coffman2000}
+V.~Coffman, J.~Kundu, and W.~K.~Wootters, ``Distributed entanglement,'' \textit{Phys.\ Rev.\ A}\ \textbf{61}, 052306 (2000).
+
+\bibitem{Jungnitsch2011}
+B.~Jungnitsch, T.~Moroder, and O.~G\"{u}hne, ``Taming multiparticle entanglement,'' \textit{Phys.\ Rev.\ Lett.}\ \textbf{106}, 190502 (2011).
+
+\bibitem{Edelsbrunner2002}
+H.~Edelsbrunner, D.~Letscher, and A.~Zomorodian, ``Topological persistence and simplification,'' \textit{Discrete Comput.\ Geom.}\ \textbf{28}, 511 (2002).
+
+\bibitem{Zomorodian2005}
+A.~Zomorodian and G.~Carlsson, ``Computing persistent homology,'' \textit{Discrete Comput.\ Geom.}\ \textbf{33}, 249 (2005).
+
+\bibitem{CohenSteiner2007}
+D.~Cohen-Steiner, H.~Edelsbrunner, and J.~Harer, ``Stability of persistence diagrams,'' \textit{Discrete Comput.\ Geom.}\ \textbf{37}, 103 (2007).
+
+\bibitem{DiPierro2018}
+A.~Di~Pierro, S.~Mancini, L.~Memarzadeh, and R.~Mengoni, ``Homological analysis of multi-qubit entanglement,'' \textit{Europhys.\ Lett.}\ \textbf{123}, 30006 (2018), arXiv:1802.04572.
+
+\bibitem{Mengoni2019}
+R.~Mengoni, L.~Memarzadeh, A.~Di~Pierro, and S.~Mancini, ``Persistent homology analysis of multiqubit entanglement,'' arXiv:1907.06914 (2019).
+
+\bibitem{Olsthoorn2023}
+B.~Olsthoorn, ``Persistent homology of quantum entanglement,'' \textit{Phys.\ Rev.\ B}\ \textbf{107}, 115174 (2023), arXiv:2110.10214.
+
+\bibitem{Hamilton2024}
+G.~A.~Hamilton and F.~Leditzky, ``Probing multipartite entanglement through persistent homology,'' \textit{Commun.\ Math.\ Phys.}\ \textbf{405}, 125 (2024), arXiv:2307.07492.
+
+\bibitem{Spellman2025}
+C.~Spellman \textit{et al.}, ``Interpreting Multipartite Entanglement through Topological Summaries,'' arXiv:2505.00642 (2025).
+
+\bibitem{Casali2013}
+A.~G.~Casali \textit{et al.}, ``A theoretically based index of consciousness independent of sensory processing and behavior,'' \textit{Sci.\ Transl.\ Med.}\ \textbf{5}, 198ra105 (2013).
+
+\bibitem{Hohn2021}
+P.~A.~H\"{o}hn, A.~R.~H.~Smith, and M.~P.~E.~Lock, ``Trinity of relational quantum dynamics,'' \textit{Phys.\ Rev.\ D}\ \textbf{104}, 066001 (2021).
+
+\bibitem{Maldacena2013}
+J.~Maldacena and L.~Susskind, ``Cool horizons for entangled black holes,'' \textit{Fortschr.\ Phys.}\ \textbf{61}, 781 (2013).
+
+\bibitem{VanRaamsdonk2010}
+M.~Van~Raamsdonk, ``Building up spacetime with quantum entanglement,'' \textit{Gen.\ Rel.\ Grav.}\ \textbf{42}, 2323 (2010).
+
+\bibitem{Kitaev2006}
+A.~Kitaev and J.~Preskill, ``Topological entanglement entropy,'' \textit{Phys.\ Rev.\ Lett.}\ \textbf{96}, 110404 (2006).
+
+\bibitem{Bott1959}
+R.~Bott, ``The stable homotopy of the classical groups,'' \textit{Ann.\ of Math.}\ \textbf{70}, 313 (1959).
+
+\bibitem{Kitaev2009}
+A.~Kitaev, ``Periodic table for topological insulators and superconductors,'' \textit{AIP Conf.\ Proc.}\ \textbf{1134}, 22 (2009), arXiv:0901.2686.
+
+\bibitem{Mileyko2011}
+Y.~Mileyko, S.~Mukherjee, and J.~Harer, ``Probability measures on the space of persistence diagrams,'' \textit{Inverse Problems}\ \textbf{27}, 124007 (2011).
+
+\end{thebibliography}
+
+\end{document}

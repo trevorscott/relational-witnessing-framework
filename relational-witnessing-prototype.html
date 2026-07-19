@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="An interactive explainer for Trevor Scott's Relational Witnessing Framework." />
+  <title>Relational Witnessing — Interactive Framework</title>
+  <style>
+    :root {
+      --ink: #f7f4ff;
+      --paper: #050610;
+      --paper-2: #0b0d1c;
+      --white: #111426;
+      --violet: #9367ff;
+      --violet-soft: #2d2457;
+      --coral: #ff7796;
+      --mint: #5cf2db;
+      --gold: #ffd88a;
+      --line: rgba(192, 202, 255, .17);
+      --muted: #adb1c8;
+      --radius: 20px;
+      --shadow: 0 28px 100px rgba(0, 0, 0, .42), 0 0 55px rgba(108, 74, 232, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 75% 8%, rgba(120, 81, 255, .2), transparent 30rem),
+        radial-gradient(circle at 12% 28%, rgba(29, 179, 190, .1), transparent 24rem),
+        radial-gradient(circle at 52% 72%, rgba(255, 87, 137, .07), transparent 34rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    .serif { font-family: Georgia, "Times New Roman", serif; }
+    .starfield { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
+    .starfield i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: white; opacity: .45; box-shadow: 0 0 8px rgba(255,255,255,.65); animation: twinkle var(--twinkle, 5s) ease-in-out infinite alternate; }
+    @keyframes twinkle { from { opacity: .12; transform: scale(.75); } to { opacity: .75; transform: scale(1.3); } }
+
+    .topbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 18px;
+      min-height: 68px;
+      padding: 10px clamp(18px, 4vw, 64px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 6, 16, .78);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand { font-weight: 780; letter-spacing: -.03em; text-decoration: none; }
+    .brand-mark { color: var(--violet); }
+    .desktop-nav { display: flex; gap: 6px; }
+    .desktop-nav a {
+      padding: 8px 11px;
+      color: var(--muted);
+      border-radius: 99px;
+      font-size: .84rem;
+      text-decoration: none;
+    }
+    .desktop-nav a:hover, .desktop-nav a.active { color: var(--ink); background: rgba(255,255,255,.08); }
+
+    .depth-switch {
+      justify-self: end;
+      display: inline-flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: rgba(255,255,255,.045);
+    }
+    .depth-switch button {
+      border: 0;
+      padding: 7px 10px;
+      border-radius: 99px;
+      background: transparent;
+      color: var(--muted);
+      font-size: .78rem;
+      cursor: pointer;
+    }
+    .depth-switch button[aria-pressed="true"] { color: #080812; background: var(--mint); box-shadow: 0 0 24px rgba(92,242,219,.24); }
+
+    main { overflow: hidden; }
+    .shell { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+    .section { padding: clamp(82px, 11vw, 150px) 0; scroll-margin-top: 68px; }
+    .section-kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: var(--violet);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .section-kicker::before { width: 28px; height: 1px; content: ""; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; }
+    h1 { max-width: 950px; margin-bottom: 24px; font-size: clamp(3.15rem, 8.5vw, 7.9rem); line-height: .92; letter-spacing: -.065em; }
+    h1 em { color: var(--mint); font-weight: inherit; text-shadow: 0 0 38px rgba(92,242,219,.22); }
+    h2 { max-width: 780px; margin-bottom: 24px; font-size: clamp(2.35rem, 5vw, 5.1rem); line-height: .98; letter-spacing: -.055em; }
+    h3 { margin-bottom: 10px; font-size: 1rem; letter-spacing: -.02em; }
+    .lede { max-width: 760px; color: #c4c7d7; font-size: clamp(1.12rem, 2vw, 1.45rem); }
+    .fine { color: var(--muted); font-size: .79rem; }
+
+    .hero { position: relative; min-height: calc(100svh - 68px); padding: clamp(72px, 9vw, 128px) 0 58px; }
+    .hero::before {
+      position: absolute;
+      top: 2%; right: -11vw;
+      width: min(58vw, 760px); aspect-ratio: 1;
+      content: "";
+      border: 1px solid rgba(164, 139, 255, .17);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.96) 0 2px, rgba(92,242,219,.65) 3px, rgba(147,103,255,.24) 8%, transparent 27%),
+        repeating-radial-gradient(circle at 50%, transparent 0 10%, rgba(164,139,255,.1) 10.15% 10.35%, transparent 10.5% 19%);
+      filter: drop-shadow(0 0 70px rgba(109, 78, 255, .17));
+      animation: orbitpulse 11s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .hero::after { position: absolute; top: 24%; right: 11%; width: 9px; height: 9px; content: ""; border-radius: 50%; background: var(--coral); box-shadow: 0 0 20px var(--coral), -220px 190px 0 -2px var(--mint), -220px 190px 18px 0 rgba(92,242,219,.7); animation: drift 8s ease-in-out infinite alternate; }
+    @keyframes orbitpulse { from { transform: rotate(-4deg) scale(.96); opacity: .7; } to { transform: rotate(5deg) scale(1.03); opacity: 1; } }
+    @keyframes drift { from { transform: translate3d(-4px,-8px,0); } to { transform: translate3d(12px,9px,0); } }
+    .hero-top { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 34px; align-items: end; }
+    .hero-top, .thesis-strip { position: relative; z-index: 1; }
+    .hero-side { padding: 0 0 18px 22px; border-left: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+    .hero-side strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--mint);
+      border-radius: 99px;
+      background: var(--mint);
+      color: #080812;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn.secondary { border-color: var(--line); background: rgba(255,255,255,.04); color: var(--ink); }
+    .btn:hover { transform: translateY(-1px); }
+
+    .thesis-strip {
+      display: grid;
+      grid-template-columns: 1.1fr repeat(3, 1fr);
+      margin-top: clamp(64px, 10vw, 120px);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(147,103,255,.08), rgba(92,242,219,.025));
+    }
+    .thesis-strip > div { min-height: 120px; padding: 20px; border-right: 1px solid var(--line); }
+    .thesis-strip > div:last-child { border-right: 0; }
+    .thesis-strip .label { color: var(--muted); font-size: .72rem; font-weight: 750; text-transform: uppercase; letter-spacing: .11em; }
+    .thesis-strip .word { margin-top: 28px; font-family: Georgia, serif; font-size: 1.8rem; }
+
+    .statement {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: clamp(28px, 7vw, 100px);
+      align-items: start;
+    }
+    .statement blockquote { margin: 0; font-family: Georgia, serif; font-size: clamp(1.8rem, 3.4vw, 3.4rem); line-height: 1.08; letter-spacing: -.035em; }
+    .status-note { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.045); }
+    .status-note strong { display: block; margin-bottom: 8px; }
+
+    .cut-lab {
+      position: relative;
+      min-height: 560px;
+      margin-top: 56px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 35% 48%, rgba(147,103,255,.22), transparent 25%),
+        radial-gradient(circle at 70% 42%, rgba(92,242,219,.13), transparent 23%),
+        #080913;
+      box-shadow: var(--shadow);
+      color: white;
+    }
+    .cut-canvas { position: absolute; inset: 0; }
+    .particle { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.66); transition: transform 900ms cubic-bezier(.2,.8,.2,1), background 500ms; }
+    .cut-lab.is-cut .particle:nth-child(3n) { transform: translateX(-34px); background: var(--violet-soft); }
+    .cut-lab.is-cut .particle:nth-child(3n + 1) { transform: translateX(34px); background: var(--mint); }
+    .whole-label { position: absolute; top: 42px; left: 50%; transform: translateX(-50%); font-family: Georgia, serif; font-size: 1.4rem; transition: opacity 300ms; }
+    .cut-lab.is-cut .whole-label { opacity: .25; }
+    .cut-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: linear-gradient(transparent, var(--coral) 16%, var(--coral) 84%, transparent); opacity: 0; transform: scaleY(.2); transition: 600ms; }
+    .cut-lab.is-cut .cut-line { opacity: 1; transform: scaleY(1); }
+    .cut-side { position: absolute; top: 50%; width: 34%; opacity: 0; transform: translateY(-50%); transition: 500ms 160ms; }
+    .cut-side.left { left: 7%; transform: translate(-20px,-50%); }
+    .cut-side.right { right: 7%; transform: translate(20px,-50%); }
+    .cut-lab.is-cut .cut-side { opacity: 1; transform: translate(0,-50%); }
+    .cut-side .cap { color: rgba(255,255,255,.55); font-size: .72rem; text-transform: uppercase; letter-spacing: .13em; }
+    .cut-side .big { margin: 8px 0; font-family: Georgia, serif; font-size: clamp(2.3rem, 5vw, 4.5rem); }
+    .cut-side p { max-width: 350px; color: rgba(255,255,255,.62); font-size: .88rem; }
+    .projection-row {
+      position: absolute;
+      right: 5%; bottom: 34px; left: 5%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: 500ms 420ms;
+    }
+    .cut-lab.is-cut .projection-row { opacity: 1; transform: none; }
+    .projection { padding: 15px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: rgba(255,255,255,.07); backdrop-filter: blur(10px); }
+    .projection b { display: block; color: var(--mint); }
+    .projection span { color: rgba(255,255,255,.58); font-size: .74rem; }
+    .lab-controls { position: absolute; z-index: 2; top: 24px; right: 24px; display: flex; gap: 8px; }
+    .lab-controls button { padding: 9px 12px; border: 1px solid rgba(255,255,255,.18); border-radius: 99px; background: rgba(255,255,255,.08); color: white; cursor: pointer; }
+    .lab-controls button.primary { background: white; color: var(--ink); }
+
+    .map-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); margin-top: 36px; border-top: 1px solid var(--line); }
+    .map-card { position: relative; padding: 22px 18px 26px; border-right: 1px solid var(--line); }
+    .map-card:last-child { border: 0; }
+    .map-card .num { color: var(--coral); font-family: Georgia, serif; font-size: 1.6rem; }
+    .map-card p { margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
+    .badge { display: inline-flex; margin-top: 14px; padding: 4px 8px; border-radius: 99px; background: var(--violet-soft); color: #dcd4ff; font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+    .badge.conjecture { background: rgba(255,119,150,.16); color: #ffb1c3; }
+
+    .time-layout, .topology-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(28px, 6vw, 84px); align-items: start; }
+    .lab-card { padding: clamp(22px, 4vw, 38px); border: 1px solid var(--line); border-radius: 28px; background: linear-gradient(145deg, rgba(22,25,49,.96), rgba(10,12,27,.96)); box-shadow: var(--shadow); }
+    .equation { margin: 20px 0; overflow-x: auto; font-family: Georgia, serif; font-size: clamp(1.3rem, 2.5vw, 2.15rem); white-space: nowrap; }
+    .range-group { margin: 24px 0; }
+    .range-head { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 10px; font-size: .82rem; font-weight: 700; }
+    input[type="range"] { width: 100%; accent-color: var(--violet); }
+    .readout { margin-top: 28px; padding: 20px; border: 1px solid rgba(92,242,219,.15); border-radius: 18px; background: rgba(1,3,11,.72); color: white; }
+    .readout .value { display: block; margin: 4px 0 8px; color: var(--mint); font-family: Georgia, serif; font-size: clamp(2rem, 4vw, 3.8rem); line-height: 1; }
+    .tick-track { position: relative; height: 64px; margin-top: 22px; overflow: hidden; border-top: 1px solid rgba(255,255,255,.25); }
+    .tick { position: absolute; top: -5px; width: 1px; height: 38px; background: var(--coral); animation: tickmove 2s linear infinite; }
+    .tick:nth-child(2) { animation-delay: -.5s; }
+    .tick:nth-child(3) { animation-delay: -1s; }
+    .tick:nth-child(4) { animation-delay: -1.5s; }
+    @keyframes tickmove { from { left: 0; } to { left: 100%; } }
+    .assumptions { display: grid; gap: 9px; margin-top: 24px; }
+    .assumption { display: flex; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: .8rem; }
+    .assumption::before { content: "A"; flex: 0 0 auto; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--coral); color: white; font-size: .68rem; font-weight: 800; }
+
+    .topology-wrap { min-height: 500px; background: radial-gradient(circle at 50% 46%, rgba(147,103,255,.17), transparent 45%), #090a15; color: white; }
+    #topologySvg { width: 100%; height: auto; min-height: 360px; }
+    .edge { stroke: rgba(150,213,190,.72); stroke-width: 3; transition: opacity .2s; }
+    .face { fill: rgba(91,74,232,.28); stroke: rgba(216,209,255,.45); stroke-width: 1; }
+    .node { fill: #f9f6ff; stroke: #171820; stroke-width: 4; filter: drop-shadow(0 0 9px rgba(92,242,219,.5)); }
+    .node-label { fill: #171820; font-size: 14px; font-weight: 800; text-anchor: middle; dominant-baseline: central; }
+    .topology-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .topology-stat { padding: 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 12px; }
+    .topology-stat span { display: block; color: rgba(255,255,255,.5); font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; }
+    .topology-stat b { color: var(--mint); font-family: Georgia, serif; font-size: 1.8rem; }
+
+    .functor {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-top: 44px;
+      padding: clamp(24px, 5vw, 56px);
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(101,65,217,.88), rgba(19,15,53,.95));
+      color: white;
+    }
+    .category { min-height: 210px; padding: 22px; border: 1px solid rgba(255,255,255,.25); border-radius: 18px; background: rgba(255,255,255,.08); }
+    .category .cat { font-family: Georgia, serif; font-size: 2rem; }
+    .category p { color: rgba(255,255,255,.68); }
+    .arrow-gap { text-align: center; }
+    .arrow-gap .arrow { display: block; font-size: 3rem; }
+    .arrow-gap b { display: block; max-width: 150px; color: #fff5a8; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+
+    .research-table { width: 100%; margin-top: 38px; border-collapse: collapse; }
+    .research-table th, .research-table td { padding: 17px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .research-table th { color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; }
+    .research-table td:first-child { width: 23%; font-weight: 750; }
+    .research-table td:last-child { width: 18%; }
+    .status { display: inline-flex; padding: 5px 8px; border-radius: 99px; font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .status.core { background: rgba(92,242,219,.15); color: #93f8e8; }
+    .status.model { background: rgba(255,216,138,.15); color: #ffe4ad; }
+    .status.open { background: rgba(255,119,150,.15); color: #ffb1c3; }
+    .status.target { background: var(--violet-soft); color: #dcd4ff; }
+
+    .detail { display: none; }
+    body[data-depth="explore"] .detail.formal,
+    body[data-depth="research"] .detail.formal,
+    body[data-depth="research"] .detail.technical { display: block; }
+    .detail { margin-top: 18px; padding: 16px 18px; border-left: 3px solid var(--violet); background: rgba(255,255,255,.045); color: #c5c7d6; font-size: .9rem; }
+    .detail.technical { border-left-color: var(--coral); }
+    .depth-hint { color: var(--muted); font-size: .76rem; }
+
+    .plain-only { display: none; }
+    body[data-depth="plain"] .plain-only { display: block; }
+    body[data-depth="plain"] .research-only,
+    body[data-depth="plain"] .equation,
+    body[data-depth="plain"] .assumptions,
+    body[data-depth="plain"] .functor,
+    body[data-depth="plain"] .research-table,
+    body[data-depth="plain"] .map-grid { display: none; }
+    .plain-story { margin: 46px 0; }
+    .story-line { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .story-line::before { position: absolute; top: 25px; right: 8%; left: 8%; height: 1px; content: ""; background: linear-gradient(90deg, var(--violet), var(--mint), var(--coral)); opacity: .45; }
+    .story-step { position: relative; z-index: 1; padding: 0 14px 20px; text-align: center; }
+    .story-step .dot { display: grid; place-items: center; width: 50px; height: 50px; margin: 0 auto 16px; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: #0d1021; box-shadow: 0 0 24px rgba(147,103,255,.15); color: var(--mint); font-family: Georgia, serif; }
+    .story-step h3 { font-size: .92rem; }
+    .story-step p { color: var(--muted); font-size: .78rem; }
+    .plain-takeaway, .plain-bridge, .plain-claims { margin-top: 28px; padding: clamp(22px, 4vw, 38px); border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(145deg, rgba(22,25,49,.82), rgba(10,12,27,.82)); }
+    .plain-takeaway .eyebrow, .plain-bridge .eyebrow { color: var(--mint); font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .plain-takeaway p, .plain-bridge p { max-width: 760px; margin: 10px 0 0; font-family: Georgia, serif; font-size: clamp(1.35rem, 2.6vw, 2.2rem); line-height: 1.18; }
+    .plain-clock { padding: 26px 0 8px; }
+    .plain-clock-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
+    .clock-orb { display: grid; place-items: center; min-height: 115px; padding: 14px; border: 1px solid var(--line); border-radius: 50%; background: radial-gradient(circle, rgba(147,103,255,.2), rgba(6,7,16,.8) 65%); box-shadow: inset 0 0 28px rgba(147,103,255,.08), 0 0 28px rgba(92,242,219,.07); text-align: center; }
+    .clock-orb b { display: block; color: var(--mint); }
+    .clock-orb span { color: var(--muted); font-size: .72rem; }
+    .flow-arrow { color: var(--coral); font-size: 1.7rem; }
+    .plain-bridge .gap { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; margin-top: 24px; }
+    .plain-bridge .gap > div { padding: 18px; border: 1px solid var(--line); border-radius: 16px; text-align: center; }
+    .plain-bridge .question { color: var(--gold); font-family: Georgia, serif; font-size: 2.5rem; }
+    .plain-claims { display: none; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    body[data-depth="plain"] .plain-claims { display: grid; }
+    .plain-claim { padding: 18px; border: 1px solid var(--line); border-radius: 16px; }
+    .plain-claim b { display: block; margin-bottom: 7px; color: var(--mint); }
+    .plain-claim p { margin: 0; color: var(--muted); font-size: .84rem; }
+
+    .footer { padding: 40px 0 70px; border-top: 1px solid var(--line); }
+    .footer-row { display: flex; justify-content: space-between; gap: 30px; color: var(--muted); font-size: .8rem; }
+
+    @media (max-width: 900px) {
+      .topbar { grid-template-columns: 1fr auto; }
+      .desktop-nav { display: none; }
+      .hero-top, .statement, .time-layout, .topology-layout { grid-template-columns: 1fr; }
+      .hero-side { max-width: 580px; }
+      .thesis-strip { grid-template-columns: 1fr 1fr; }
+      .thesis-strip > div:nth-child(2) { border-right: 0; }
+      .thesis-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .map-grid { grid-template-columns: 1fr 1fr; }
+      .map-card { border-bottom: 1px solid var(--line); }
+      .map-card:nth-child(2n) { border-right: 0; }
+      .functor { grid-template-columns: 1fr; }
+      .arrow-gap .arrow { transform: rotate(90deg); }
+      .story-line { grid-template-columns: 1fr 1fr; }
+      .story-line::before { display: none; }
+    }
+
+    @media (max-width: 620px) {
+      .topbar { min-height: 60px; padding-inline: 14px; }
+      .brand { font-size: .88rem; }
+      .depth-switch button { padding: 6px 8px; font-size: .7rem; }
+      .shell { width: min(100% - 26px, 1180px); }
+      .hero { min-height: auto; }
+      .thesis-strip, .map-grid { grid-template-columns: 1fr; }
+      .thesis-strip > div, .map-card { border-right: 0; border-bottom: 1px solid var(--line); }
+      .cut-lab { min-height: 720px; }
+      .cut-side { top: 31%; width: 39%; }
+      .cut-side.left { left: 5%; }
+      .cut-side.right { right: 5%; }
+      .cut-side .big { font-size: 2.4rem; }
+      .projection-row { grid-template-columns: 1fr; }
+      .lab-controls { top: auto; right: 18px; bottom: 232px; left: 18px; justify-content: center; }
+      .research-table, .research-table tbody, .research-table tr, .research-table td { display: block; }
+      .research-table thead { display: none; }
+      .research-table tr { padding: 16px 0; border-bottom: 1px solid var(--line); }
+      .research-table td { width: 100% !important; padding: 5px 0; border: 0; }
+      .footer-row { flex-direction: column; }
+      .story-line, .plain-claims { grid-template-columns: 1fr; }
+      .plain-clock-flow, .plain-bridge .gap { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body data-depth="plain">
+  <div class="starfield" id="starfield" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#overview"><span class="brand-mark">R·W</span> Relational Witnessing</a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#cut">The cut</a>
+      <a href="#time">Time lab</a>
+      <a href="#topology">Topology</a>
+      <a href="#research">Research map</a>
+    </nav>
+    <div class="depth-switch" aria-label="Reading depth">
+      <button type="button" data-depth-button="plain" aria-pressed="true">Plain English</button>
+      <button type="button" data-depth-button="explore" aria-pressed="false">Explore</button>
+      <button type="button" data-depth-button="research" aria-pressed="false">Research</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="overview" data-nav-section>
+      <div class="shell">
+        <div class="hero-top">
+          <div>
+            <p class="section-kicker">An interactive framework</p>
+            <h1>The universe may be timeless. So why does <em>now</em> feel real?</h1>
+            <p class="lede">Imagine the universe not as a movie playing frame by frame, but as the entire reel existing at once. This framework asks how a point of view—and a sense of time—could still arise inside it.</p>
+            <div class="hero-actions">
+              <a class="btn" href="#cut">Place the epistemic cut</a>
+              <a class="btn secondary" href="#research">See what is proven</a>
+            </div>
+          </div>
+          <aside class="hero-side">
+            <strong>How to read this</strong>
+            Start in Plain English: no physics background required. Switch to Explore for the key concepts, or Research for equations, assumptions, and objections.
+          </aside>
+        </div>
+
+        <div class="thesis-strip" aria-label="Core thesis">
+          <div><span class="label">One boundary</span><div class="word">The cut</div></div>
+          <div><span class="label">What appears</span><div class="word">A viewpoint</div></div>
+          <div><span class="label">What is hidden</span><div class="word">Uncertainty</div></div>
+          <div><span class="label">What can emerge</span><div class="word">Time</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="orientation-title">
+      <div class="shell statement">
+        <div>
+          <p class="section-kicker">Orientation</p>
+          <h2 id="orientation-title">The whole can be still while relationships inside it tell a story.</h2>
+        </div>
+        <div>
+          <blockquote>Draw a boundary around one part of the universe, and three things appear together: a point of view, incomplete information, and a way to order change.</blockquote>
+          <div class="status-note" style="margin-top:28px">
+            <strong>Scope matters.</strong>
+            This is a proposed way to connect existing ideas—not a claim that consciousness has been solved. It clarifies what the physics can explain, what requires extra assumptions, and exactly where the mystery remains.
+          </div>
+          <div class="plain-only plain-story">
+            <div class="story-line">
+              <article class="story-step"><div class="dot">1</div><h3>The whole</h3><p>The universe is treated as one complete, unchanging quantum pattern.</p></article>
+              <article class="story-step"><div class="dot">2</div><h3>A viewpoint</h3><p>Draw a boundary around one part. That local part becomes the “witness.”</p></article>
+              <article class="story-step"><div class="dot">3</div><h3>A blind spot</h3><p>The witness cannot access the whole pattern, only its side of the relationship.</p></article>
+              <article class="story-step"><div class="dot">4</div><h3>Memory</h3><p>It can compare records while an internal clock marks different states.</p></article>
+              <article class="story-step"><div class="dot">5</div><h3>A “now”</h3><p>The ordered record changes supply relational time—but not yet felt experience.</p></article>
+            </div>
+          </div>
+          <div class="detail formal"><b>Starting constraint.</b> The global state satisfies Ĥ|Ψ⟩ = 0 and is pure, so S(ρ<sub>total</sub>) = 0. “Timeless” here means no evolution with respect to an external coordinate parameter.</div>
+          <div class="detail technical"><b>Interpretive boundary.</b> The partial trace theorem fixes all local observable statistics. Reading that reduced state as the witness’s epistemic perspective is explicitly interpretive; the formal construction does not require wave-function collapse.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cut" data-nav-section aria-labelledby="cut-title">
+      <div class="shell">
+        <p class="section-kicker">01 · The generating move</p>
+        <h2 id="cut-title">Make one imaginary cut. A point of view appears.</h2>
+        <p class="lede">This is not a physical slice through space. It means choosing one part of the universe and asking: what could the world look like from only that part?</p>
+        <p class="depth-hint">The deeper reading modes reveal the precise quantum meaning of this boundary.</p>
+
+        <div class="cut-lab" id="cutLab" aria-live="polite">
+          <div class="cut-canvas" id="particleField" aria-hidden="true"></div>
+          <div class="whole-label">|Ψ⟩ · the timeless whole</div>
+          <div class="cut-line" aria-hidden="true"></div>
+          <div class="cut-side left">
+            <span class="cap">The local viewpoint</span>
+            <div class="big">W</div>
+            <p>The Witness: the part whose limited point of view we are describing.</p>
+          </div>
+          <div class="cut-side right">
+            <span class="cap">Everything beyond it</span>
+            <div class="big">R</div>
+            <p>The Rest: everything the witness is connected to but cannot directly access as a whole.</p>
+          </div>
+          <div class="lab-controls">
+            <button type="button" class="primary" id="placeCut">Place the cut</button>
+            <button type="button" id="resetCut">Reset</button>
+          </div>
+          <div class="projection-row" aria-label="Three projections of the cut">
+            <div class="projection"><b>A viewpoint</b><span>W has access to only its local side.</span></div>
+            <div class="projection"><b>Uncertainty</b><span>Some information lives in the connection between W and R.</span></div>
+            <div class="projection"><b>An order</b><span>Internal clock states can organize changing records.</span></div>
+          </div>
+        </div>
+
+        <div class="plain-only plain-takeaway">
+          <span class="eyebrow">The key idea</span>
+          <p>The witness is uncertain not because the universe itself is incomplete, but because part of the information belongs to its relationship with everything else.</p>
+        </div>
+
+        <div class="detail formal"><b>The two canonical maps.</b> The bipartition H<sub>total</sub> = H<sub>W</sub> ⊗ H<sub>R</sub> induces (1) ρ<sub>W</sub> = Tr<sub>R</sub>(|Ψ⟩⟨Ψ|), which fixes the local statistics and entanglement entropy, and (2) |ψ̃(τ)⟩ = (⟨w(τ)|<sub>C</sub> ⊗ 𝟙)|Ψ⟩, which defines a family of states conditional on internal clock readings.</div>
+        <div class="detail technical"><b>The factorization objection.</b> Tensor-product structure is not unique a priori. The paper selects the factorization through the physical meaning and locality of a specified observable algebra, with non-interaction as a supplementary condition on the clock factor. Whether this fully fixes the memory and internal factorizations remains the framework’s most dangerous open issue.</div>
+
+        <div class="map-grid" aria-label="Five-part framework map">
+          <article class="map-card"><span class="num">I</span><h3>Timeless whole</h3><p>A global pure state under the Hamiltonian constraint.</p><span class="badge">Deductive core</span></article>
+          <article class="map-card"><span class="num">II</span><h3>Bipartition</h3><p>Witness and Rest are selected by an observable-induced factorization.</p><span class="badge">Deductive core</span></article>
+          <article class="map-card"><span class="num">III</span><h3>Formal witness</h3><p>Genuine W:R entanglement makes the local state mixed.</p><span class="badge">Deductive core</span></article>
+          <article class="map-card"><span class="num">IV</span><h3>Relational time</h3><p>Clock-conditioned records supply an internal temporal order.</p><span class="badge">Core + assumptions</span></article>
+          <article class="map-card"><span class="num">V</span><h3>Phenomenal bridge</h3><p>A structure-preserving functor remains to be constructed.</p><span class="badge conjecture">Conjectural</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="time" data-nav-section aria-labelledby="time-title">
+      <div class="shell time-layout">
+        <div>
+          <p class="section-kicker">02 · Time lab</p>
+          <h2 id="time-title">Time appears when a clock and a memory can be compared.</h2>
+          <p class="lede">From outside, the whole pattern is unchanged. From inside, one part can act as a clock while another stores records. Comparing “the record when the clock says this” with “the record when the clock says that” creates an internal order.</p>
+          <div class="plain-only plain-takeaway">
+            <span class="eyebrow">In ordinary language</span>
+            <p>No remembered difference, no meaningful “before” and “after.” In this model, time is the order found in changing records—not a universal river flowing outside the universe.</p>
+          </div>
+          <div class="detail formal"><b>Clock–memory decomposition.</b> H<sub>W</sub> = H<sub>C</sub> ⊗ H<sub>M</sub>. The clock C remains non-interacting for Page–Wootters consistency; the memory M may interact with R and bears the information cost.</div>
+          <div class="detail technical"><b>Do not overread the result.</b> Directly inserting Landauer’s lower energy bound into the denominator of Margolus–Levitin would be invalid. The displayed relation follows only after assuming equality at the Landauer limit and a shared energy budget between clock orthogonalization and memory overwrite.</div>
+        </div>
+        <div class="lab-card">
+          <p class="section-kicker">Explore the model</p>
+          <div class="plain-only plain-clock">
+            <div class="plain-clock-flow">
+              <div class="clock-orb"><div><b>Clock</b><span>marks a distinguishable state</span></div></div>
+              <span class="flow-arrow">→</span>
+              <div class="clock-orb"><div><b>Memory</b><span>holds a different record</span></div></div>
+              <span class="flow-arrow">→</span>
+              <div class="clock-orb"><div><b>Time</b><span>is the order between them</span></div></div>
+            </div>
+            <p class="fine" style="margin:22px 0 0">The paper then asks how quickly such a step could occur in a perfectly energy-efficient witness. That quantitative bound is available in Explore and Research modes.</p>
+          </div>
+          <div class="equation research-only" aria-label="Delta tau optimal is greater than or equal to pi h bar over two k B T natural log two times delta S">Δτ<sub>opt</sub> ≥ πℏ / (2k<sub>B</sub>T ln2 · ΔS)</div>
+
+          <div class="range-group research-only">
+            <div class="range-head"><label for="temperature">Available thermal scale T</label><output id="temperatureOut">300 K</output></div>
+            <input id="temperature" type="range" min="1" max="1000" step="1" value="300" />
+          </div>
+          <div class="range-group research-only">
+            <div class="range-head"><label for="entropy">How much the record changes ΔS</label><output id="entropyOut">1.00 bit</output></div>
+            <input id="entropy" type="range" min="1" max="1000" step="1" value="100" />
+          </div>
+
+          <div class="readout research-only">
+            <span class="fine" style="color:rgba(255,255,255,.55)">Fastest permitted step for this idealized model</span>
+            <output class="value" id="timeOut">5.77 × 10⁻¹⁴ s</output>
+            <span class="fine" style="color:rgba(255,255,255,.55)">This is a quantum speed-limit floor, not the actual tick rate.</span>
+            <div class="tick-track" aria-hidden="true"><i class="tick"></i><i class="tick"></i><i class="tick"></i><i class="tick"></i></div>
+          </div>
+
+          <div class="assumptions" aria-label="Assumptions required for the bound">
+            <div class="assumption">Thermodynamic optimality at the Landauer limit</div>
+            <div class="assumption">Record identification and clock–memory co-budgeting</div>
+            <div class="assumption">Monotonic conditional records, ΔS &gt; 0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="topology" data-nav-section aria-labelledby="topology-title">
+      <div class="shell">
+        <div class="topology-layout">
+          <div>
+            <p class="section-kicker">03 · Entanglement topology</p>
+            <h2 id="topology-title">Being connected is not the same as being conscious.</h2>
+            <p class="lede">A tiny quantum system can be connected to its surroundings without having an experience. The framework therefore asks whether the <em>shape</em> and complexity of connections inside a witness could distinguish different kinds of conscious state.</p>
+            <div class="plain-only plain-takeaway">
+              <span class="eyebrow">How to read the picture</span>
+              <p>Dots are parts of the witness. Lines are strong quantum connections. Loops and filled shapes show organization that survives as weaker connections are ignored.</p>
+            </div>
+            <div class="detail formal"><b>Flag complex.</b> Internal subsystems become vertices; pairwise logarithmic negativities w<sub>ij</sub> become weighted edges. A higher simplex appears exactly when all of its pairwise edges appear, with weight equal to the weakest edge.</div>
+            <div class="detail technical"><b>Known limitation.</b> A flag complex built from pair marginals cannot detect genuinely multipartite entanglement with vanishing pairwise negativity, such as GHZ-type structure. The visualization is therefore a model of pairwise-negativity topology, not total quantum integration.</div>
+          </div>
+
+          <div class="lab-card topology-wrap">
+            <div class="range-head"><label for="threshold">Only show connections stronger than</label><output id="thresholdOut">0.55</output></div>
+            <input id="threshold" type="range" min="0" max="100" step="1" value="55" />
+            <svg id="topologySvg" viewBox="0 0 520 390" role="img" aria-label="Interactive entanglement flag complex"></svg>
+            <div class="topology-stats">
+              <div class="topology-stat"><span>Separate groups · H₀</span><b id="beta0">—</b></div>
+              <div class="topology-stat"><span>Open loops · H₁</span><b id="beta1">—</b></div>
+              <div class="topology-stat"><span>Filled faces</span><b id="facesCount">—</b></div>
+            </div>
+            <p class="fine" style="margin:14px 0 0;color:rgba(255,255,255,.48)">Move the control slowly. A pattern that survives across many settings is “persistent”—less likely to be a fragile accident.</p>
+          </div>
+        </div>
+
+        <div class="functor" aria-label="Functor constraint diagram">
+          <div class="category"><span class="cat">Phys</span><h3>Witness states and LOCC morphisms</h3><p>Physical objects retain the global W:R state, the designated bipartition, and W’s internal factorization.</p></div>
+          <div class="arrow-gap"><span class="arrow">→</span><b>F is the missing bridge</b></div>
+          <div class="category"><span class="cat">Phen</span><h3>Experiences and their transitions</h3><p>The category itself is not yet formally defined. Any candidate map must preserve compositional structure and factor through entanglement topology.</p></div>
+        </div>
+        <div class="plain-only plain-bridge">
+          <span class="eyebrow">Where the hard problem remains</span>
+          <p>The framework can describe the physical structure of a witness. It does not yet explain why that structure should feel like anything from the inside.</p>
+          <div class="gap">
+            <div>Physical pattern<br><span class="fine">connections, records, clock states</span></div>
+            <span class="question">?</span>
+            <div>Felt experience<br><span class="fine">color, sound, pain, the present moment</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research" data-nav-section aria-labelledby="research-title">
+      <div class="shell">
+        <p class="section-kicker">04 · Research map</p>
+        <h2 id="research-title">What is established, what is proposed, and what is still unknown?</h2>
+        <p class="lede">The framework is deliberately honest about its boundaries. Some ingredients come from established physics. Some connections require assumptions. The consciousness bridge and topological hypothesis remain open research.</p>
+
+        <div class="plain-claims">
+          <article class="plain-claim"><b>Established ingredients</b><p>Quantum theory allows a globally fixed state, local reduced viewpoints, internal clocks, and physical limits connecting information, energy, and distinguishable change.</p></article>
+          <article class="plain-claim"><b>The framework’s synthesis</b><p>A single boundary can co-generate the local viewpoint, its uncertainty, and its relational ordering of records.</p></article>
+          <article class="plain-claim"><b>Assumed for the time bound</b><p>The witness is modeled as maximally energy-efficient, using a shared energy budget, while its memory records change monotonically.</p></article>
+          <article class="plain-claim"><b>Still unsolved</b><p>Why any physical structure produces felt experience, whether connection topology is the right bridge, and whether the preferred boundary is uniquely fixed.</p></article>
+        </div>
+
+        <table class="research-table">
+          <thead><tr><th>Layer</th><th>What it contributes</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Global stasis</td><td>Wheeler–DeWitt constraint and global purity establish the timeless starting point.</td><td><span class="status core">Core premise</span></td></tr>
+            <tr><td>Epistemic cut</td><td>Observable-induced factorization, partial trace, and genuine W:R entanglement define the formal witness.</td><td><span class="status core">Deductive core</span></td></tr>
+            <tr><td>Relational time</td><td>Page–Wootters conditioning plus a clock–memory decomposition defines internal steps and record increments.</td><td><span class="status core">Deductive core</span></td></tr>
+            <tr><td>Optimal time bound</td><td>Landauer and Margolus–Levitin are composed under optimality, record-identification, co-budgeting, and monotonicity.</td><td><span class="status model">Model-dependent</span></td></tr>
+            <tr><td>Phenomenal functor</td><td>Defines the hard problem as constructing Phen and a structure-preserving map F from physical witnessing.</td><td><span class="status open">Open problem</span></td></tr>
+            <tr><td>Persistent topology</td><td>Hypothesizes that structural class factors through the persistent homology of a pairwise-negativity flag complex.</td><td><span class="status open">Conjectural</span></td></tr>
+            <tr><td>Anesthesia transition</td><td>Targets a collapse of long-lived H₁ and higher features, while acknowledging measurement and biological-scale caveats.</td><td><span class="status target">Research target</span></td></tr>
+            <tr><td>Bott-type periodicity</td><td>Asks whether physically realizable spaces of entanglement signatures recur homotopically as complexity grows.</td><td><span class="status open">Appendix conjecture</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="detail formal"><b>Synthesized formalism.</b><br>Ĥ|Ψ⟩ = 0 → H<sub>total</sub> = H<sub>W</sub> ⊗ H<sub>R</sub> → ρ<sub>W</sub> = Tr<sub>R</sub>|Ψ⟩⟨Ψ| with E<sub>N</sub>(W:R) &gt; 0 → Δτ<sub>opt</sub> ≥ πℏ/(2k<sub>B</sub>T ln2 · ΔS) → F(ρ<sub>W</sub>) = F′(χ(K<sub>W</sub>), ρ<sub>W</sub>).</div>
+        <div class="detail technical"><b>Suggested researcher route.</b> Start at the factorization criterion, audit the clock–memory separation and energy co-budgeting assumption, then examine whether the persistent-homology construction is sufficiently expressive beyond pairwise negativity. The explicit toy Hamiltonian realizing co-budgeting is a clean near-term technical target.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-row">
+      <div><strong>The Relational Witnessing Framework</strong><br>Trevor Scott · July 2026</div>
+      <div>Interactive concept prototype · grounded in the supplied manuscript<br>No claim here extends beyond the paper’s stated scope and assumptions.</div>
+    </div>
+  </footer>
+
+  <script>
+    const body = document.body;
+    const starfield = document.getElementById('starfield');
+    for (let i = 0; i < 150; i += 1) {
+      const star = document.createElement('i');
+      star.style.left = `${(i * 61.7) % 100}%`;
+      star.style.top = `${(i * 37.3) % 100}%`;
+      const size = i % 17 === 0 ? 3 : (i % 5 === 0 ? 2 : 1);
+      star.style.width = star.style.height = `${size}px`;
+      star.style.setProperty('--twinkle', `${3.2 + (i % 8) * .65}s`);
+      star.style.animationDelay = `${-(i % 11) * .47}s`;
+      starfield.appendChild(star);
+    }
+
+    document.querySelectorAll('[data-depth-button]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const depth = button.dataset.depthButton;
+        body.dataset.depth = depth;
+        document.querySelectorAll('[data-depth-button]').forEach((item) => {
+          item.setAttribute('aria-pressed', String(item === button));
+        });
+      });
+    });
+
+    const field = document.getElementById('particleField');
+    for (let i = 0; i < 72; i += 1) {
+      const point = document.createElement('i');
+      point.className = 'particle';
+      point.style.left = `${5 + ((i * 47) % 90)}%`;
+      point.style.top = `${8 + ((i * 71) % 82)}%`;
+      point.style.opacity = String(.22 + ((i * 13) % 60) / 100);
+      point.style.width = point.style.height = `${3 + (i % 4)}px`;
+      field.appendChild(point);
+    }
+
+    const cutLab = document.getElementById('cutLab');
+    const placeCut = document.getElementById('placeCut');
+    const resetCut = document.getElementById('resetCut');
+    placeCut.addEventListener('click', () => {
+      cutLab.classList.add('is-cut');
+      placeCut.textContent = 'Cut placed';
+    });
+    resetCut.addEventListener('click', () => {
+      cutLab.classList.remove('is-cut');
+      placeCut.textContent = 'Place the cut';
+    });
+
+    const superscript = (number) => String(number).replace(/-/g, '⁻').replace(/0/g, '⁰').replace(/1/g, '¹').replace(/2/g, '²').replace(/3/g, '³').replace(/4/g, '⁴').replace(/5/g, '⁵').replace(/6/g, '⁶').replace(/7/g, '⁷').replace(/8/g, '⁸').replace(/9/g, '⁹');
+    const sci = (value) => {
+      if (!Number.isFinite(value) || value === 0) return '0 s';
+      const exponent = Math.floor(Math.log10(Math.abs(value)));
+      const mantissa = value / (10 ** exponent);
+      return `${mantissa.toFixed(2)} × 10${superscript(exponent)} s`;
+    };
+
+    const temperature = document.getElementById('temperature');
+    const entropy = document.getElementById('entropy');
+    const temperatureOut = document.getElementById('temperatureOut');
+    const entropyOut = document.getElementById('entropyOut');
+    const timeOut = document.getElementById('timeOut');
+    const ticks = document.querySelectorAll('.tick');
+    const updateTime = () => {
+      const T = Number(temperature.value);
+      const deltaS = Number(entropy.value) / 100;
+      const hbar = 1.054571817e-34;
+      const kB = 1.380649e-23;
+      const bound = Math.PI * hbar / (2 * kB * T * Math.log(2) * deltaS);
+      temperatureOut.textContent = `${T} K`;
+      entropyOut.textContent = `${deltaS.toFixed(2)} ${deltaS === 1 ? 'bit' : 'bits'}`;
+      timeOut.textContent = sci(bound);
+      const visualDuration = Math.max(.45, Math.min(4.5, 1.2 / Math.sqrt(T * deltaS / 300)));
+      ticks.forEach((tick, index) => {
+        tick.style.animationDuration = `${visualDuration}s`;
+        tick.style.animationDelay = `${-index * visualDuration / 4}s`;
+      });
+    };
+    temperature.addEventListener('input', updateTime);
+    entropy.addEventListener('input', updateTime);
+    updateTime();
+
+    const nodes = [
+      { x: 260, y: 55, label: '1' },
+      { x: 410, y: 140, label: '2' },
+      { x: 405, y: 300, label: '3' },
+      { x: 260, y: 355, label: '4' },
+      { x: 105, y: 300, label: '5' },
+      { x: 100, y: 140, label: '6' },
+    ];
+    const edges = [
+      [0,1,.92],[1,2,.82],[2,3,.73],[3,4,.65],[4,5,.59],[5,0,.88],
+      [0,2,.48],[2,4,.42],[4,0,.36],[1,3,.30],[3,5,.24],[5,1,.18],
+      [0,3,.12]
+    ];
+    const svg = document.getElementById('topologySvg');
+    const threshold = document.getElementById('threshold');
+    const thresholdOut = document.getElementById('thresholdOut');
+    const beta0Out = document.getElementById('beta0');
+    const beta1Out = document.getElementById('beta1');
+    const facesOut = document.getElementById('facesCount');
+    const ns = 'http://www.w3.org/2000/svg';
+
+    const rankGF2 = (matrix) => {
+      if (!matrix.length || !matrix[0]?.length) return 0;
+      const a = matrix.map((row) => row.slice());
+      let rank = 0;
+      let col = 0;
+      while (rank < a.length && col < a[0].length) {
+        let pivot = rank;
+        while (pivot < a.length && a[pivot][col] === 0) pivot += 1;
+        if (pivot === a.length) { col += 1; continue; }
+        [a[rank], a[pivot]] = [a[pivot], a[rank]];
+        for (let r = 0; r < a.length; r += 1) {
+          if (r !== rank && a[r][col]) {
+            for (let c = col; c < a[0].length; c += 1) a[r][c] ^= a[rank][c];
+          }
+        }
+        rank += 1;
+        col += 1;
+      }
+      return rank;
+    };
+
+    const updateTopology = () => {
+      const epsilon = Number(threshold.value) / 100;
+      thresholdOut.textContent = epsilon.toFixed(2);
+      svg.innerHTML = '';
+      const active = edges.filter((edge) => edge[2] >= epsilon);
+      const activeKeys = new Set(active.map(([a,b]) => `${Math.min(a,b)}-${Math.max(a,b)}`));
+      const triangles = [];
+      for (let a = 0; a < nodes.length; a += 1) {
+        for (let b = a + 1; b < nodes.length; b += 1) {
+          for (let c = b + 1; c < nodes.length; c += 1) {
+            if (activeKeys.has(`${a}-${b}`) && activeKeys.has(`${a}-${c}`) && activeKeys.has(`${b}-${c}`)) triangles.push([a,b,c]);
+          }
+        }
+      }
+
+      triangles.forEach((triangle) => {
+        const polygon = document.createElementNS(ns, 'polygon');
+        polygon.setAttribute('class', 'face');
+        polygon.setAttribute('points', triangle.map((index) => `${nodes[index].x},${nodes[index].y}`).join(' '));
+        svg.appendChild(polygon);
+      });
+      active.forEach(([a,b]) => {
+        const line = document.createElementNS(ns, 'line');
+        line.setAttribute('class', 'edge');
+        line.setAttribute('x1', nodes[a].x); line.setAttribute('y1', nodes[a].y);
+        line.setAttribute('x2', nodes[b].x); line.setAttribute('y2', nodes[b].y);
+        svg.appendChild(line);
+      });
+      nodes.forEach((node) => {
+        const circle = document.createElementNS(ns, 'circle');
+        circle.setAttribute('class', 'node'); circle.setAttribute('cx', node.x); circle.setAttribute('cy', node.y); circle.setAttribute('r', 20);
+        svg.appendChild(circle);
+        const label = document.createElementNS(ns, 'text');
+        label.setAttribute('class', 'node-label'); label.setAttribute('x', node.x); label.setAttribute('y', node.y + 1); label.textContent = node.label;
+        svg.appendChild(label);
+      });
+
+      const boundary1 = Array.from({length:nodes.length}, () => Array(active.length).fill(0));
+      active.forEach(([a,b], col) => { boundary1[a][col] = 1; boundary1[b][col] = 1; });
+      const edgeIndex = new Map(active.map(([a,b], index) => [`${Math.min(a,b)}-${Math.max(a,b)}`, index]));
+      const boundary2 = Array.from({length:active.length}, () => Array(triangles.length).fill(0));
+      triangles.forEach(([a,b,c], col) => {
+        [`${a}-${b}`,`${a}-${c}`,`${b}-${c}`].forEach((key) => { boundary2[edgeIndex.get(key)][col] = 1; });
+      });
+      const rank1 = rankGF2(boundary1);
+      const rank2 = rankGF2(boundary2);
+      beta0Out.textContent = String(nodes.length - rank1);
+      beta1Out.textContent = String(active.length - rank1 - rank2);
+      facesOut.textContent = String(triangles.length);
+    };
+    threshold.addEventListener('input', updateTopology);
+    updateTopology();
+
+    const sections = [...document.querySelectorAll('[data-nav-section]')];
+    const navLinks = [...document.querySelectorAll('.desktop-nav a')];
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`));
+    }, { rootMargin: '-25% 0px -60% 0px', threshold: [0,.25,.5] });
+    sections.forEach((section) => observer.observe(section));
+  </script>
+</body>
+</html>
